@@ -1,0 +1,1 @@
+export { PrismaPersistence } from './prisma.persistence';

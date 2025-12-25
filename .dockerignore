@@ -1,0 +1,10 @@
+*
+!/package.json
+!/pnpm-lock.yaml
+!/src
+!/prisma
+!/tsconfig.build.json
+!/tsconfig.json
+!/.env
+!/nest-cli.json
+!/prisma.config.ts
