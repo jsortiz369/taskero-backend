@@ -151,36 +151,25 @@ export class UserRepositoryPostgres implements IUserRepository {
    * @author Jogan Ortiz Muñoz
    *
    * @async
-   * @param {UserId} id
+   * @param {User} user
    * @returns {Promise<User>}
    */
-  async delete(id: UserId): Promise<User> {
+  async delete(user: User): Promise<User> {
     const deleted = new Date();
 
-    const result = await this._prisma.user.update({
+    const emailSplit = user.email._value.split('@');
+    const emailDeleted = `${emailSplit[0]}_deleted@${emailSplit[1]}`;
+    await this._prisma.user.update({
       data: {
         status: false,
         updatedAt: deleted,
         deletedAt: deleted,
+        email: emailDeleted,
       },
-      where: { id: id._value },
+      where: { id: user._id._value },
       omit: { deletedAt: true },
     });
 
-    return User.fromPrimitives({
-      _id: result.id,
-      names: result.names,
-      surnames: result.surnames,
-      birthday: result.birthday,
-      phone: result.phone,
-      email: result.email,
-      avatar: result.avatar,
-      confirmed: result.confirmed,
-      status: result.status,
-      failedAttempts: result.failedAttempts,
-      lockUntil: result.lockUntil,
-      createdAt: result.createdAt,
-      updatedAt: result.updatedAt,
-    });
+    return user;
   }
 }

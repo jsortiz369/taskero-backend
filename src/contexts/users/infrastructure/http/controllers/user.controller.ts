@@ -1,12 +1,17 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 
 import { ROUTES } from 'src/app/http/routes';
 import { UserCreateDto } from '../dto';
 import { UserCreateCommand, UserCreateHandler } from 'src/contexts/users/application/commands/user-create';
+import { UserDeleteHandler, UserDeleteIdCommand } from 'src/contexts/users/application/commands/user-delete';
+import { UuidDto } from 'src/app/http/dto';
 
 @Controller(ROUTES.USERS)
 export class UserController {
-  constructor(private readonly userCreateHandler: UserCreateHandler) {}
+  constructor(
+    private readonly userCreateHandler: UserCreateHandler,
+    private readonly userDeleteHandler: UserDeleteHandler,
+  ) {}
 
   @Get()
   async findAll() {
@@ -41,7 +46,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  async remove() {
-    // Logic to delete a user
+  async remove(@Param() param: UuidDto) {
+    return await this.userDeleteHandler.execute(new UserDeleteIdCommand(param.id));
   }
 }

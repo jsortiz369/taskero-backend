@@ -65,8 +65,8 @@ export abstract class IUserRepository {
    * @author Jogan Ortiz Muñoz
    *
    * @abstract
-   * @param {UserId} id
+   * @param {User} user
    * @returns {Promise<User>}
    */
-  abstract delete(id: UserId): Promise<User>;
+  abstract delete(user: User): Promise<User>;
 }
