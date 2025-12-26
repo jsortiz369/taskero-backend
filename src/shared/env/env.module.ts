@@ -1,16 +1,16 @@
 import { Global, Module } from '@nestjs/common';
 
-import { EnvRepository } from './domain/env.repository';
-import { ZodEnvPersistence } from './infrastructure/persistences';
+import { IEnvRepository } from './domain/env.repository';
+import { EnvRepositoryZod } from './infrastructure/persistences';
 
 @Global()
 @Module({
   providers: [
     {
-      provide: EnvRepository,
-      useClass: ZodEnvPersistence,
+      provide: IEnvRepository,
+      useClass: EnvRepositoryZod,
     },
   ],
-  exports: [EnvRepository],
+  exports: [IEnvRepository],
 })
 export class EnvModule {}

@@ -1,10 +1,10 @@
-import { UuidRepository } from '../../domain/uuid.repository';
+import { IUuidRepository } from '../../domain/uuid.repository';
 import { REGEX_UUID_V4 } from '../constants';
 
-export class UuidV4Persistence implements UuidRepository {
+export class UuidRepositoryV4 implements IUuidRepository {
   /**
-   * @description Generate uuid
-   * @date 2025-12-21 20:38:15
+   * @description Generate uuid v4
+   * @date 2025-12-26 06:48:06
    * @author Jogan Ortiz Muñoz
    *
    * @returns {string}
@@ -14,8 +14,8 @@ export class UuidV4Persistence implements UuidRepository {
   }
 
   /**
-   * @description Validate uuid
-   * @date 2025-12-21 20:38:23
+   * @description Validate uuid v4
+   * @date 2025-12-26 06:48:18
    * @author Jogan Ortiz Muñoz
    *
    * @param {string} uuid

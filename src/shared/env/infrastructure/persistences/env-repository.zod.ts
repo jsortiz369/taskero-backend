@@ -3,14 +3,14 @@ import { ZodSafeParseResult } from 'zod';
 
 import { Env } from '../../domain/env.interface';
 import { ZodEnvSchema } from '../schemas';
-import { EnvRepository } from '../../domain/env.repository';
+import { IEnvRepository } from '../../domain/env.repository';
 
-export class ZodEnvPersistence implements EnvRepository {
+export class EnvRepositoryZod implements IEnvRepository {
   private readonly _env: Env;
 
   /**
-   * Creates an instance of ZodEnvPersistence.
-   * @date 2025-12-21 20:37:12
+   * Creates an instance of EnvRepositoryZod.
+   * @date 2025-12-26 06:41:50
    * @author Jogan Ortiz Muñoz
    *
    * @constructor
@@ -35,7 +35,7 @@ export class ZodEnvPersistence implements EnvRepository {
 
   /**
    * @description Get environment variable by key
-   * @date 2025-12-21 20:37:20
+   * @date 2025-12-26 06:41:58
    * @author Jogan Ortiz Muñoz
    *
    * @template {keyof Env} T
@@ -50,7 +50,7 @@ export class ZodEnvPersistence implements EnvRepository {
 
   /**
    * @description Get system variable by key
-   * @date 2025-12-21 20:37:29
+   * @date 2025-12-26 06:42:06
    * @author Jogan Ortiz Muñoz
    *
    * @template {string} T
@@ -64,7 +64,7 @@ export class ZodEnvPersistence implements EnvRepository {
 
   /**
    * @description Validate key exist
-   * @date 2025-12-21 20:37:36
+   * @date 2025-12-26 06:42:15
    * @author Jogan Ortiz Muñoz
    *
    * @private

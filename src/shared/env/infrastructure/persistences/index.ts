@@ -1,1 +1,1 @@
-export { ZodEnvPersistence } from './env-zod.persistence';
+export { EnvRepositoryZod } from './env-repository.zod';

@@ -1,13 +1,3 @@
-export enum StatusType {
-  INACTIVE = '0',
-  ACTIVE = '1',
-}
-
-export enum RoleType {
-  USER = '0',
-  ADMIN = '1',
-}
-
 export enum SortOrderType {
   ASC = 'asc',
   DESC = 'desc',

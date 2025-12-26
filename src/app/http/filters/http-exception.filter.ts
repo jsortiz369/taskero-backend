@@ -1,10 +1,18 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { LoggerRepository } from 'src/shared/logger/domain/logger.repository';
+import { ILoggerRepository } from 'src/shared/logger/domain/logger.repository';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(private readonly _logger: LoggerRepository) {}
+  /**
+   * Creates an instance of HttpExceptionFilter.
+   * @date 2025-12-26 06:55:38
+   * @author Jogan Ortiz Muñoz
+   *
+   * @constructor
+   * @param {ILoggerRepository} _logger
+   */
+  constructor(private readonly _logger: ILoggerRepository) {}
 
   catch(exception: HttpException | Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();

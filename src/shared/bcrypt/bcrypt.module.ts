@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { BcryptRepository } from './domain/bcrypt.repository';
-import { BcryptPersistence } from './infrastructure/persistences';
+import { IBcryptRepository } from './domain/bcrypt.repository';
+import { BcryptRepository } from './infrastructure/persistences';
 
 @Module({
   providers: [
     {
-      provide: BcryptRepository,
-      useClass: BcryptPersistence,
+      provide: IBcryptRepository,
+      useClass: BcryptRepository,
     },
   ],
-  exports: [BcryptRepository],
+  exports: [IBcryptRepository],
 })
 export class BcryptModule {}

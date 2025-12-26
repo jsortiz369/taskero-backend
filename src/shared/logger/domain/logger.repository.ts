@@ -1,7 +1,7 @@
-export abstract class LoggerRepository {
+export abstract class ILoggerRepository {
   /**
    * @description show the messages
-   * @date 2025-12-22 06:45:47
+   * @date 2025-12-26 06:44:33
    * @author Jogan Ortiz Muñoz
    *
    * @abstract
@@ -12,7 +12,7 @@ export abstract class LoggerRepository {
 
   /**
    * @description Show error messages
-   * @date 2025-12-22 06:46:43
+   * @date 2025-12-26 06:44:46
    * @author Jogan Ortiz Muñoz
    *
    * @abstract
@@ -24,7 +24,7 @@ export abstract class LoggerRepository {
 
   /**
    * @description show warning messages
-   * @date 2025-12-22 06:47:08
+   * @date 2025-12-26 06:44:54
    * @author Jogan Ortiz Muñoz
    *
    * @abstract

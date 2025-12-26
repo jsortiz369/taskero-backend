@@ -5,15 +5,15 @@ import fastifyMultipart from '@fastify/multipart';
 process.env.TZ = 'UTC';
 
 import { AppModule } from './app/app.module';
-import { EnvRepository } from './shared/env/domain/env.repository';
+import { IEnvRepository } from './shared/env/domain/env.repository';
 import { HttpExceptionFilter } from './app/http/filters';
 import { MultipartBodyInterceptor } from './app/http/interceptors';
-import { LoggerRepository } from './shared/logger/domain/logger.repository';
+import { ILoggerRepository } from './shared/logger/domain/logger.repository';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
 
-  const logger = app.get<LoggerRepository>(LoggerRepository);
+  const logger = app.get<ILoggerRepository>(ILoggerRepository);
 
   // global filters
   app.useGlobalFilters(app.get<HttpExceptionFilter>(HttpExceptionFilter));
@@ -33,7 +33,7 @@ async function bootstrap() {
   });
 
   // get port from env
-  const _env = app.get<EnvRepository>(EnvRepository);
+  const _env = app.get<IEnvRepository>(IEnvRepository);
   const port: number | string = _env.get('PORT');
   const origin = _env.get('CORS_ORIGIN');
 

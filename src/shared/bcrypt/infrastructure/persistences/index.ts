@@ -1,1 +1,1 @@
-export { BcryptPersistence } from './bcrypt.persistence';
+export { BcryptRepository } from './bcrypt.repository';

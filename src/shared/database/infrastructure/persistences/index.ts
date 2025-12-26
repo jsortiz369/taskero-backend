@@ -1,1 +1,1 @@
-export { PrismaPersistence } from './prisma.persistence';
+export { PrismaRepository } from './prisma.repository';

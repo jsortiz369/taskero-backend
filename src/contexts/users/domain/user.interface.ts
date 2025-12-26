@@ -6,8 +6,8 @@ export interface UserPrimitive {
   phone: string;
   email: string;
   avatar?: string | null;
-  confirmed?: boolean | null;
-  status?: boolean | null;
+  confirmed: boolean;
+  status: boolean;
   failedAttempts?: number | null;
   lockUntil?: Date | null;
   createdAt: Date;

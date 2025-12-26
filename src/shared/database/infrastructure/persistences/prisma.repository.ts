@@ -3,13 +3,13 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from 'generated/prisma';
 
 import { PrismaUtil } from '../utils';
-import { EnvRepository } from 'src/shared/env/domain/env.repository';
-import { LoggerRepository } from 'src/shared/logger/domain/logger.repository';
+import { IEnvRepository } from 'src/shared/env/domain/env.repository';
+import { ILoggerRepository } from 'src/shared/logger/domain/logger.repository';
 
-export class PrismaPersistence extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+export class PrismaRepository extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor(
-    private readonly _logger: LoggerRepository,
-    _env: EnvRepository,
+    private readonly _logger: ILoggerRepository,
+    _env: IEnvRepository,
   ) {
     const adapter = new PrismaPg({ connectionString: _env.dataBaseUrl });
     super({ adapter });

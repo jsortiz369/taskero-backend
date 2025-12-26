@@ -1,1 +1,1 @@
-export { LoggerPersistence } from './logger.persistence';
+export { LoggerRepositoryLogger } from './logger-repository.logger';

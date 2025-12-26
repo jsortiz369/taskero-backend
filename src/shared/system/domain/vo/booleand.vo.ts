@@ -1,6 +1,6 @@
 import { InvalidValueException } from '../exceptions';
 
-export class BooleanValueObject<T extends boolean | undefined | null> {
+export class BooleanValueObject<T extends boolean> {
   readonly _value: T;
 
   /**
@@ -27,7 +27,6 @@ export class BooleanValueObject<T extends boolean | undefined | null> {
    * @param {string} message
    */
   private isValidBoolean(message: string): void {
-    if (this._value === null || this._value === undefined) return;
     if (typeof this._value !== 'boolean') throw new InvalidValueException(message);
     return;
   }

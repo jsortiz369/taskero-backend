@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { LoggerJob } from './infrastructure/jobs';
-import { LoggerRepository } from './domain/logger.repository';
-import { LoggerPersistence } from './infrastructure/persistences';
+import { ILoggerRepository } from './domain/logger.repository';
+import { LoggerRepositoryLogger } from './infrastructure/persistences';
 
 @Module({
   providers: [
     LoggerJob,
     {
-      provide: LoggerRepository,
-      useClass: LoggerPersistence,
+      provide: ILoggerRepository,
+      useClass: LoggerRepositoryLogger,
     },
   ],
-  exports: [LoggerRepository],
+  exports: [ILoggerRepository],
 })
 export class LoggerModule {}

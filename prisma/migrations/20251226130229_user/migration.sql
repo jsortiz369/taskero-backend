@@ -17,7 +17,7 @@ CREATE TABLE "system"."users_tokens" (
     "_id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "user_id" UUID NOT NULL,
     "token" VARCHAR(255) NOT NULL,
-    "expires_at" TIMESTAMP NOT NULL DEFAULT now() + interval '10 minutes',
+    "expires_at" TIMESTAMP NOT NULL DEFAULT now(),
 
     CONSTRAINT "users_tokens_pkey" PRIMARY KEY ("_id")
 );
@@ -31,8 +31,8 @@ CREATE TABLE "system"."users" (
     "phone" VARCHAR(25) NOT NULL,
     "email" VARCHAR(100) NOT NULL,
     "avatar" VARCHAR(255),
-    "confirmed" BOOLEAN DEFAULT false,
-    "status" BOOLEAN DEFAULT false,
+    "confirmed" BOOLEAN NOT NULL DEFAULT false,
+    "status" BOOLEAN NOT NULL DEFAULT false,
     "failed_attempts" SMALLINT DEFAULT 0,
     "lock_until" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

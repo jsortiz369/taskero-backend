@@ -1,1 +1,1 @@
-export { UuidV4Persistence } from './uuid-v4.persistence';
+export { UuidRepositoryV4 } from './uuid-repository.v4';

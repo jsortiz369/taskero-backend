@@ -3,11 +3,19 @@ import { MultipartFile } from '@fastify/multipart';
 import { Observable, tap } from 'rxjs';
 import type { FastifyRequest } from 'fastify';
 
-import { LoggerRepository } from 'src/shared/logger/domain/logger.repository';
+import { ILoggerRepository } from 'src/shared/logger/domain/logger.repository';
 
 @Injectable()
 export class MultipartBodyInterceptor implements NestInterceptor {
-  constructor(private readonly _logger: LoggerRepository) {}
+  /**
+   * Creates an instance of MultipartBodyInterceptor.
+   * @date 2025-12-26 06:55:44
+   * @author Jogan Ortiz Muñoz
+   *
+   * @constructor
+   * @param {ILoggerRepository} _logger
+   */
+  constructor(private readonly _logger: ILoggerRepository) {}
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const now = Date.now();

@@ -1,18 +1,18 @@
-import { PrismaPersistence } from 'src/shared/database/infrastructure/persistences';
+import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
 import { IUserRepository } from '../../domain/repositories';
 import { UserEmail, UserId, UserPhone } from '../../domain/vo';
 import { User } from '../../domain/user';
 
-export class UserPersistence implements IUserRepository {
+export class UserRepositoryPostgres implements IUserRepository {
   /**
-   * Creates an instance of UserPersistence.
-   * @date 2025-12-25 21:20:42
+   * Creates an instance of UserRepositoryPostgres.
+   * @date 2025-12-26 06:36:21
    * @author Jogan Ortiz Muñoz
    *
    * @constructor
-   * @param {PrismaPersistence} _prisma
+   * @param {PrismaRepository} _prisma
    */
-  constructor(private readonly _prisma: PrismaPersistence) {}
+  constructor(private readonly _prisma: PrismaRepository) {}
 
   /**
    * @description Get One User By Id

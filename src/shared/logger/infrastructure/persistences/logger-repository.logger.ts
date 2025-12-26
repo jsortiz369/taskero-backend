@@ -2,14 +2,14 @@ import { Logger } from '@nestjs/common';
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { LoggerRepository } from '../../domain/logger.repository';
+import { ILoggerRepository } from '../../domain/logger.repository';
 
-export class LoggerPersistence implements LoggerRepository {
+export class LoggerRepositoryLogger implements ILoggerRepository {
   private readonly logger: Logger = new Logger();
 
   /**
    * @description show the messages
-   * @date 2025-12-22 06:49:03
+   * @date 2025-12-26 06:45:59
    * @author Jogan Ortiz Muñoz
    *
    * @param {*} message
@@ -25,7 +25,7 @@ export class LoggerPersistence implements LoggerRepository {
 
   /**
    * @description Show error messages
-   * @date 2025-12-22 06:49:12
+   * @date 2025-12-26 06:46:05
    * @author Jogan Ortiz Muñoz
    *
    * @param {*} message
@@ -43,7 +43,7 @@ export class LoggerPersistence implements LoggerRepository {
 
   /**
    * @description show warning messages
-   * @date 2025-12-22 06:49:22
+   * @date 2025-12-26 06:46:13
    * @author Jogan Ortiz Muñoz
    *
    * @param {*} message
@@ -58,7 +58,7 @@ export class LoggerPersistence implements LoggerRepository {
 
   /**
    * @description Create file messages
-   * @date 2025-12-22 06:49:28
+   * @date 2025-12-26 06:46:21
    * @author Jogan Ortiz Muñoz
    *
    * @private

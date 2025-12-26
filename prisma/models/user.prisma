@@ -6,8 +6,8 @@ model User {
     phone           String      @db.VarChar(25) @unique
     email           String      @db.VarChar(100) @unique
     avatar          String?     @db.VarChar(255)
-    confirmed       Boolean?    @db.Boolean @default(false)
-    status          Boolean?    @db.Boolean @default(false)
+    confirmed       Boolean     @db.Boolean @default(false)
+    status          Boolean     @db.Boolean @default(false)
     failedAttempts  Int?        @db.SmallInt @default(0) @map("failed_attempts")
     lockUntil       DateTime?   @db.Timestamp(3) @map("lock_until")
     createdAt       DateTime    @db.Timestamp(3) @default(now()) @map("created_at")
