@@ -1,7 +1,8 @@
-import { IUserRepository } from 'src/contexts/users/domain/repositories';
-import { UserFindOneByIdService } from 'src/contexts/users/domain/services';
 import { UserPrimitive } from 'src/contexts/users/domain/user.interface';
 import { UserDeleteIdCommand } from './user-delete-id.command';
+import { UserQueryFindOneByIdService } from 'src/contexts/users/domain/services';
+import { IUserCommandRepository } from 'src/contexts/users/domain/repositories';
+import { UserId } from 'src/contexts/users/domain/vo';
 
 type UserCreateResponse = Pick<UserPrimitive, '_id' | 'names' | 'surnames' | 'birthday' | 'phone' | 'email' | 'createdAt' | 'updatedAt'>;
 export class UserDeleteHandler {
@@ -11,20 +12,20 @@ export class UserDeleteHandler {
    * @author Jogan Ortiz Muñoz
    *
    * @constructor
-   * @param {UserFindOneByIdService} _userFindOneByIdService
-   * @param {IUserRepository} _userRepository
+   * @param {UserQueryFindOneByIdService} _userQueryFindOneByIdService
+   * @param {IUserCommandRepository} _userRepository
    */
   constructor(
-    private readonly _userFindOneByIdService: UserFindOneByIdService,
-    private readonly _userRepository: IUserRepository,
+    private readonly _userQueryFindOneByIdService: UserQueryFindOneByIdService,
+    private readonly _userRepository: IUserCommandRepository,
   ) {}
 
   async execute(idCommand: UserDeleteIdCommand): Promise<UserCreateResponse> {
     // TODO: validate exist user by ID
-    const user = await this._userFindOneByIdService.execute(idCommand._id);
+    const user = await this._userQueryFindOneByIdService.execute(idCommand._id);
 
     // TODO: delete user
-    const userDelete = await this._userRepository.delete(user);
+    const userDelete = await this._userRepository.delete(new UserId(user._id));
     const userPrimitive = userDelete.toValuesPrimitives();
 
     return {

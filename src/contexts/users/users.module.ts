@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { IUserRepository } from './domain/repositories';
-import { UserRepositoryPostgres } from './infrastructure/persistences/user-repository.postgres';
+import { IUserQueryRepository, IUserCommandRepository } from './domain/repositories';
+import { UserQueryRepositoryPostgres, UserCommandRepositoryPostgres } from './infrastructure/persistences';
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
 import { DatabaseModule } from 'src/shared/database/database.module';
 import { IUuidRepository } from 'src/shared/uuid/domain/uuid.repository';
@@ -17,28 +17,40 @@ import * as handlers from './application';
   controllers: [controllers.UserController],
   providers: [
     {
-      provide: IUserRepository,
-      useFactory: (prisma: PrismaRepository) => new UserRepositoryPostgres(prisma),
+      provide: IUserCommandRepository,
+      useFactory: (prisma: PrismaRepository) => new UserCommandRepositoryPostgres(prisma),
       inject: [PrismaRepository],
     },
     {
-      provide: services.UserFindOneByIdService,
-      useFactory: (_userRepository: IUserRepository) => new services.UserFindOneByIdService(_userRepository),
-      inject: [IUserRepository],
+      provide: IUserQueryRepository,
+      useFactory: (prisma: PrismaRepository) => new UserQueryRepositoryPostgres(prisma),
+      inject: [PrismaRepository],
+    },
+    {
+      provide: services.UserQueryFindOneByIdService,
+      useFactory: (userQuery: IUserQueryRepository) => new services.UserQueryFindOneByIdService(userQuery),
+      inject: [IUserQueryRepository],
     },
     {
       provide: handlers.UserCreateHandler,
-      useFactory: (_uuidRepository: IUuidRepository, _bcryptRepository: IBcryptRepository, _userRepository: IUserRepository) => {
-        return new handlers.UserCreateHandler(_uuidRepository, _bcryptRepository, _userRepository);
+      useFactory: (uuid: IUuidRepository, bcrypt: IBcryptRepository, userQuery: IUserQueryRepository, userCommand: IUserCommandRepository) => {
+        return new handlers.UserCreateHandler(uuid, bcrypt, userQuery, userCommand);
       },
-      inject: [IUuidRepository, IBcryptRepository, IUserRepository],
+      inject: [IUuidRepository, IBcryptRepository, IUserQueryRepository, IUserCommandRepository],
     },
     {
       provide: handlers.UserDeleteHandler,
-      useFactory: (_userFindOneByIdService: services.UserFindOneByIdService, _userRepository: IUserRepository) => {
-        return new handlers.UserDeleteHandler(_userFindOneByIdService, _userRepository);
+      useFactory: (userQueryFindById: services.UserQueryFindOneByIdService, userCommand: IUserCommandRepository) => {
+        return new handlers.UserDeleteHandler(userQueryFindById, userCommand);
       },
-      inject: [services.UserFindOneByIdService, IUserRepository],
+      inject: [services.UserQueryFindOneByIdService, IUserCommandRepository],
+    },
+    {
+      provide: handlers.UserUpdateHandler,
+      useFactory: (userQueryFindById: services.UserQueryFindOneByIdService, userQuery: IUserQueryRepository, userCommand: IUserCommandRepository) => {
+        return new handlers.UserUpdateHandler(userQueryFindById, userQuery, userCommand);
+      },
+      inject: [services.UserQueryFindOneByIdService, IUserQueryRepository, IUserCommandRepository],
     },
   ],
 })

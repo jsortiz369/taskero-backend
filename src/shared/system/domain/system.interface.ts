@@ -1,8 +1,3 @@
-export enum SortOrderType {
-  ASC = 'asc',
-  DESC = 'desc',
-}
-
 type Page = { page: number };
 
 type MetaQuery = Page & {
@@ -10,6 +5,13 @@ type MetaQuery = Page & {
   filter: number | undefined;
   lastPage: number;
 };
+
+export enum SortOrderType {
+  ASC = 'asc',
+  DESC = 'desc',
+}
+
+export type Nullable<T> = T | null;
 
 export type DataFindAll<T> = {
   data: T[];

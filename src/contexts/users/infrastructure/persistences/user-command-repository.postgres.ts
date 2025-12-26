@@ -1,9 +1,9 @@
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
-import { IUserRepository } from '../../domain/repositories';
-import { UserEmail, UserId, UserPhone } from '../../domain/vo';
+import { IUserCommandRepository } from '../../domain/repositories';
+import { UserId } from '../../domain/vo';
 import { User } from '../../domain/user';
 
-export class UserRepositoryPostgres implements IUserRepository {
+export class UserCommandRepositoryPostgres implements IUserCommandRepository {
   /**
    * Creates an instance of UserRepositoryPostgres.
    * @date 2025-12-26 06:36:21
@@ -13,75 +13,6 @@ export class UserRepositoryPostgres implements IUserRepository {
    * @param {PrismaRepository} _prisma
    */
   constructor(private readonly _prisma: PrismaRepository) {}
-
-  /**
-   * @description Get One User By Id
-   * @date 2025-12-25 21:20:46
-   * @author Jogan Ortiz Muñoz
-   *
-   * @async
-   * @param {UserId} id
-   * @returns {Promise<User | null>}
-   */
-  async findOneById(id: UserId): Promise<User | null> {
-    const result = await this._prisma.user.findFirst({
-      where: { id: id._value, deletedAt: null },
-      omit: { deletedAt: true },
-    });
-    if (!result) return null;
-
-    return User.fromPrimitives({
-      _id: result.id,
-      names: result.names,
-      surnames: result.surnames,
-      birthday: result.birthday,
-      phone: result.phone,
-      email: result.email,
-      avatar: result.avatar,
-      confirmed: result.confirmed,
-      status: result.status,
-      failedAttempts: result.failedAttempts,
-      lockUntil: result.lockUntil,
-      createdAt: result.createdAt,
-      updatedAt: result.updatedAt,
-    });
-  }
-
-  /**
-   * @description Validate exist email
-   * @date 2025-12-25 21:21:03
-   * @author Jogan Ortiz Muñoz
-   *
-   * @async
-   * @param {UserEmail} email
-   * @param {?UserId} [_id]
-   * @returns {Promise<boolean>}
-   */
-  async existByEmail(email: UserEmail, _id?: UserId): Promise<boolean> {
-    const result = await this._prisma.user.findFirst({
-      where: { email: email._value, id: { not: _id?._value }, deletedAt: null },
-      select: { id: true },
-    });
-    return result !== null;
-  }
-
-  /**
-   * @description Validate exist phone
-   * @date 2025-12-25 21:23:06
-   * @author Jogan Ortiz Muñoz
-   *
-   * @async
-   * @param {UserPhone} phone
-   * @param {?UserId} [_id]
-   * @returns {Promise<boolean>}
-   */
-  async existByPhone(phone: UserPhone, _id?: UserId): Promise<boolean> {
-    const result = await this._prisma.user.findFirst({
-      where: { phone: phone._value, id: { not: _id?._value }, deletedAt: null },
-      select: { id: true },
-    });
-    return result !== null;
-  }
 
   /**
    * @description Create user
@@ -139,7 +70,7 @@ export class UserRepositoryPostgres implements IUserRepository {
         createdAt: user.createdAtValue,
         updatedAt: user.updatedAtValue,
       },
-      where: { id: user._id._value },
+      where: { id: user._id._value, deletedAt: null },
     });
 
     return user;
@@ -151,25 +82,41 @@ export class UserRepositoryPostgres implements IUserRepository {
    * @author Jogan Ortiz Muñoz
    *
    * @async
-   * @param {User} user
+   * @param {UserId} userId
    * @returns {Promise<User>}
    */
-  async delete(user: User): Promise<User> {
-    const deleted = new Date();
+  async delete(userId: UserId): Promise<User> {
+    // TODO: Get email and phone before delete
+    const user = await this._prisma.user.findUnique({ where: { id: userId._value }, select: { email: true, phone: true } });
 
-    const emailSplit = user.email._value.split('@');
+    const emailSplit = user!.email.split('@');
     const emailDeleted = `${emailSplit[0]}_deleted@${emailSplit[1]}`;
-    await this._prisma.user.update({
+    const phoneDeleted = `${user!.phone}_deleted`;
+    const deleted = new Date();
+    const userDeleted = await this._prisma.user.update({
       data: {
         status: false,
         updatedAt: deleted,
         deletedAt: deleted,
         email: emailDeleted,
+        phone: phoneDeleted,
       },
-      where: { id: user._id._value },
+      where: { id: userId._value, deletedAt: null },
       omit: { deletedAt: true },
     });
 
-    return user;
+    return User.fromPrimitives({
+      _id: userDeleted.id,
+      names: userDeleted.names,
+      surnames: userDeleted.surnames,
+      birthday: userDeleted.birthday,
+      phone: userDeleted.phone.replace('_deleted', ''),
+      email: userDeleted.email.replace('_deleted', ''),
+      avatar: userDeleted.avatar,
+      confirmed: userDeleted.confirmed,
+      status: userDeleted.status,
+      createdAt: userDeleted.createdAt,
+      updatedAt: userDeleted.updatedAt,
+    });
   }
 }
