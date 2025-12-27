@@ -3,18 +3,16 @@ import * as i from '../../domain/database.interface';
 export class PrismaUtil {
   /**
    * @description filter search is global for every fields
-   * @date 2025-12-01 18:04:58
+   * @date 2025-12-26 19:06:03
    * @author Jogan Ortiz Muñoz
    *
    * @static
-   * @param {i.FiledSearchType} field
+   * @template {readonly string[]} T
+   * @param {{ [k in keyof T]: i.FieldSearchType<T[k]> }[number]} field
    * @param {string} value
-   * @returns {(i.FilterEnum | i.FilterString | i.FilterDate | i.FilterBoolean | i.FilterNumber | null)}
+   * @returns {i.Filter}
    */
-  static searchFilter(
-    field: i.FiledSearchType,
-    value: string,
-  ): i.FilterEnum | i.FilterString | i.FilterDate | i.FilterBoolean | i.FilterNumber | null {
+  static searchFilter<T extends readonly string[]>(field: { [k in keyof T]: i.FieldSearchType<T[k]> }[number], value: string): i.Filter {
     if (field.type === 'enum') return this.filterEnum(field, i.MatchModeEnumType.EQUALS, value);
     if (field.type === 'string') return this.filterString(field, i.MatchModeStringType.EQUALS, value);
     if (field.type === 'Date') return this.filterDate(field, i.MatchModeDateType.LTE_GTE, value);
@@ -23,13 +21,18 @@ export class PrismaUtil {
     return null;
   }
 
-  static searchFilterField(
-    field: i.FiledSearchType,
-    filter: {
-      value: string;
-      matchMode: i.MatchModeEnumType | i.MatchModeStringType | i.MatchModeDateType | i.MatchModeBooleanType | i.MatchModeNumberType;
-    },
-  ): i.FilterEnum | i.FilterString | i.FilterDate | i.FilterBoolean | i.FilterNumber | null {
+  /**
+   * @description filter by field
+   * @date 2025-12-26 19:06:13
+   * @author Jogan Ortiz Muñoz
+   *
+   * @static
+   * @template {readonly string[]} T
+   * @param {{ [k in keyof T]: i.FieldSearchType<T[k]> }[number]} field
+   * @param {i.FieldFilter} filter
+   * @returns {Filter}
+   */
+  static searchFilterField<T extends readonly string[]>(field: { [k in keyof T]: i.FieldSearchType<T[k]> }[number], filter: i.FieldFilter): i.Filter {
     if (field.type === 'enum') return this.filterEnum(field, filter.matchMode as i.MatchModeEnumType, filter.value);
     if (field.type === 'string') return this.filterString(field, filter.matchMode as i.MatchModeStringType, filter.value);
     if (field.type === 'Date') return this.filterDate(field, filter.matchMode as i.MatchModeDateType, filter.value);
@@ -40,17 +43,17 @@ export class PrismaUtil {
 
   /**
    * @description If the filter is by string
-   * @date 2025-11-24 06:47:56
+   * @date 2025-12-26 19:06:56
    * @author Jogan Ortiz Muñoz
    *
    * @private
    * @static
-   * @param {i.FiledSearchType} field
-   * @param {string} value
+   * @param {i.FieldSearchType} field
    * @param {i.MatchModeStringType} matchMode
+   * @param {string} value
    * @returns {(i.FilterString | null)}
    */
-  private static filterString(field: i.FiledSearchType, matchMode: i.MatchModeStringType, value: string): i.FilterString | null {
+  private static filterString(field: i.FieldSearchType, matchMode: i.MatchModeStringType, value: string): i.FilterString | null {
     const fieldValue = field.callback ? field.callback(value) : value;
     if (fieldValue === undefined || fieldValue === null) return null;
 
@@ -67,17 +70,17 @@ export class PrismaUtil {
 
   /**
    * @description If the filter is by enum
-   * @date 2025-11-24 06:43:02
+   * @date 2025-12-26 19:07:40
    * @author Jogan Ortiz Muñoz
    *
    * @private
    * @static
-   * @param {i.FiledSearchType} field
-   * @param {string} value
+   * @param {i.FieldSearchType} field
    * @param {i.MatchModeEnumType} matchMode
+   * @param {string} value
    * @returns {(i.FilterEnum | null)}
    */
-  private static filterEnum(field: i.FiledSearchType, matchMode: i.MatchModeEnumType, value: string): i.FilterEnum | null {
+  private static filterEnum(field: i.FieldSearchType, matchMode: i.MatchModeEnumType, value: string): i.FilterEnum | null {
     const fieldValue = field.callback ? field.callback(value) : value;
     if (fieldValue === undefined) return null;
 
@@ -89,17 +92,17 @@ export class PrismaUtil {
 
   /**
    * @description If the filter is by date
-   * @date 2025-11-28 07:06:47
+   * @date 2025-12-26 19:07:48
    * @author Jogan Ortiz Muñoz
    *
    * @private
    * @static
-   * @param {i.FiledSearchType} field
+   * @param {i.FieldSearchType} field
    * @param {i.MatchModeDateType} matchMode
    * @param {string} value
    * @returns {(i.FilterDate | null)}
    */
-  private static filterDate(field: i.FiledSearchType, matchMode: i.MatchModeDateType, value: string): i.FilterDate | null {
+  private static filterDate(field: i.FieldSearchType, matchMode: i.MatchModeDateType, value: string): i.FilterDate | null {
     const fieldValue = field.callback ? field.callback(value) : value;
     if (fieldValue === undefined || fieldValue === null) return null;
 
@@ -125,17 +128,17 @@ export class PrismaUtil {
 
   /**
    * @description If the filter is by number
-   * @date 2025-12-01 18:02:07
+   * @date 2025-12-26 19:07:57
    * @author Jogan Ortiz Muñoz
    *
    * @private
    * @static
-   * @param {i.FiledSearchType} field
+   * @param {i.FieldSearchType} field
    * @param {i.MatchModeNumberType} matchMode
    * @param {string} value
    * @returns {(i.FilterNumber | null)}
    */
-  private static filterNumber(field: i.FiledSearchType, matchMode: i.MatchModeNumberType, value: string): i.FilterNumber | null {
+  private static filterNumber(field: i.FieldSearchType, matchMode: i.MatchModeNumberType, value: string): i.FilterNumber | null {
     const fieldValue = field.callback ? field.callback(value) : value;
     if (fieldValue === undefined || fieldValue === null) return null;
     const arrNumber = fieldValue.split(',');
@@ -157,17 +160,17 @@ export class PrismaUtil {
 
   /**
    * @description If the filter is by Boolean
-   * @date 2025-12-01 18:02:37
+   * @date 2025-12-26 19:08:04
    * @author Jogan Ortiz Muñoz
    *
    * @private
    * @static
-   * @param {i.FiledSearchType} field
+   * @param {i.FieldSearchType} field
    * @param {i.MatchModeBooleanType} matchMode
    * @param {string} value
    * @returns {(i.FilterBoolean | null)}
    */
-  private static filterBoolean(field: i.FiledSearchType, matchMode: i.MatchModeBooleanType, value: string): i.FilterBoolean | null {
+  private static filterBoolean(field: i.FieldSearchType, matchMode: i.MatchModeBooleanType, value: string): i.FilterBoolean | null {
     const fieldValue = field.callback ? field.callback(value) : value;
     if (fieldValue === undefined || fieldValue === null) return null;
 
@@ -181,7 +184,7 @@ export class PrismaUtil {
 
   /**
    * @description Validate if string is Date
-   * @date 2025-12-01 18:01:04
+   * @date 2025-12-26 19:08:12
    * @author Jogan Ortiz Muñoz
    *
    * @private
@@ -251,7 +254,7 @@ export class PrismaUtil {
 
   /**
    * @description Validate if string is booleand
-   * @date 2025-12-01 17:58:51
+   * @date 2025-12-26 19:08:23
    * @author Jogan Ortiz Muñoz
    *
    * @private
@@ -261,14 +264,12 @@ export class PrismaUtil {
    */
   private static isValidBoolean(value: string): boolean | null {
     const boolValue = value.toLowerCase();
-    if (boolValue === 'true') return true;
-    if (boolValue === 'false') return false;
-    return null;
+    return boolValue === 'true' ? true : boolValue === 'false' ? false : null;
   }
 
   /**
    * @description Validate if string is number
-   * @date 2025-12-01 17:59:19
+   * @date 2025-12-26 19:08:31
    * @author Jogan Ortiz Muñoz
    *
    * @private
@@ -278,7 +279,6 @@ export class PrismaUtil {
    */
   private static isValidNumber(value: string): number | null {
     const numberValue = Number(value);
-    if (isNaN(numberValue)) return null;
-    return numberValue;
+    return isNaN(numberValue) ? null : numberValue;
   }
 }

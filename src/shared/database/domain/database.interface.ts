@@ -41,14 +41,13 @@ export enum MatchModeEnumType {
   IN = 'in',
 }
 
-export type FiledSearchType = {
-  field: string;
+export type FieldSearchType<T = string> = {
+  field: T;
   type: 'string' | 'number' | 'boolean' | 'Date' | 'enum';
   callback?: (value: string) => string | undefined | null;
 };
 
 export type FilterEnum = { [x: string]: string | null } | { [x: string]: { not: string | null } } | { [x: string]: { in: string[] | null } };
-
 export type FilterString =
   | { [x: string]: string }
   | { [x: string]: { not: string } }
@@ -57,7 +56,6 @@ export type FilterString =
   | { [x: string]: { endsWith: string } }
   | { [x: string]: { not: { contains: string } } }
   | { [x: string]: { in: string[] } };
-
 export type FilterDate =
   | { [x: string]: Date }
   | { [x: string]: { lt: Date } }
@@ -68,9 +66,7 @@ export type FilterDate =
   | { [x: string]: { gt: Date; lt: Date } }
   | { [x: string]: { gte: Date; lte: Date } }
   | { [x: string]: { in: Date[] } };
-
 export type FilterBoolean = { [x: string]: boolean } | { [x: string]: { not: boolean } };
-
 export type FilterNumber =
   | { [x: string]: number }
   | { [x: string]: { lt: number } }
@@ -81,3 +77,10 @@ export type FilterNumber =
   | { [x: string]: { gt: number; lt: number } }
   | { [x: string]: { gte: number; lte: number } }
   | { [x: string]: { in: number[] } };
+
+export type FieldFilter = {
+  value: string;
+  matchMode: MatchModeEnumType | MatchModeStringType | MatchModeDateType | MatchModeBooleanType | MatchModeNumberType;
+};
+
+export type Filter = FilterEnum | FilterString | FilterDate | FilterBoolean | FilterNumber | null;

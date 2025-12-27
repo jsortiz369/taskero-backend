@@ -32,6 +32,34 @@ import * as handlers from './application';
       inject: [IUserQueryRepository],
     },
     {
+      provide: handlers.UserFindAllHandler,
+      useFactory: (userQuery: IUserQueryRepository) => {
+        return new handlers.UserFindAllHandler(userQuery);
+      },
+      inject: [IUserQueryRepository],
+    },
+    {
+      provide: handlers.UserFindOneByIdHandler,
+      useFactory: (userQueryFindById: services.UserQueryFindOneByIdService) => {
+        return new handlers.UserFindOneByIdHandler(userQueryFindById);
+      },
+      inject: [services.UserQueryFindOneByIdService],
+    },
+    {
+      provide: handlers.UserCheckEmailExistHandler,
+      useFactory: (userQuery: IUserQueryRepository) => {
+        return new handlers.UserCheckEmailExistHandler(userQuery);
+      },
+      inject: [IUserQueryRepository],
+    },
+    {
+      provide: handlers.UserCheckPhoneExistHandler,
+      useFactory: (userQuery: IUserQueryRepository) => {
+        return new handlers.UserCheckPhoneExistHandler(userQuery);
+      },
+      inject: [IUserQueryRepository],
+    },
+    {
       provide: handlers.UserCreateHandler,
       useFactory: (uuid: IUuidRepository, bcrypt: IBcryptRepository, userQuery: IUserQueryRepository, userCommand: IUserCommandRepository) => {
         return new handlers.UserCreateHandler(uuid, bcrypt, userQuery, userCommand);

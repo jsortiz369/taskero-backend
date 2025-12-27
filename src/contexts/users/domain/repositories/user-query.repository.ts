@@ -1,7 +1,19 @@
-import { Nullable } from 'src/shared/system/domain/system.interface';
-import { UserFindOneByIdProjection } from '../projections';
+import { DataFindAll, Nullable } from 'src/shared/system/domain/system.interface';
+import { UserFindAllProjection, UserFindOneByIdProjection } from '../projections';
+import { UserFindAll } from '../user.interface';
 
 export abstract class IUserQueryRepository {
+  /**
+   * @description Get all user by filters
+   * @date 2025-12-26 19:40:17
+   * @author Jogan Ortiz Muñoz
+   *
+   * @abstract
+   * @param {UserFindAll} query
+   * @returns {Promise<DataFindAll<UserFindAllProjection>>}
+   */
+  abstract findAll(query: UserFindAll): Promise<DataFindAll<UserFindAllProjection>>;
+
   /**
    * @description Get User By Id
    * @date 2025-12-26 10:04:10

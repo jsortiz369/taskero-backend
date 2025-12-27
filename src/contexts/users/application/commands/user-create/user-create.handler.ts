@@ -8,6 +8,17 @@ import { UserPrimitive } from 'src/contexts/users/domain/user.interface';
 
 type UserCreateResponse = Omit<UserPrimitive, 'deletedAt' | 'failedAttempts' | 'lockUntil'>;
 export class UserCreateHandler {
+  /**
+   * Creates an instance of UserCreateHandler.
+   * @date 2025-12-26 17:00:49
+   * @author Jogan Ortiz Muñoz
+   *
+   * @constructor
+   * @param {IUuidRepository} _uuidRepository
+   * @param {IBcryptRepository} _bcryptRepository
+   * @param {IUserQueryRepository} _userQueryRepository
+   * @param {IUserCommandRepository} _userCommandRepository
+   */
   constructor(
     private readonly _uuidRepository: IUuidRepository,
     private readonly _bcryptRepository: IBcryptRepository,
