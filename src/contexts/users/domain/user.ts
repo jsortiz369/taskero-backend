@@ -24,7 +24,7 @@ export class User {
    * @param {?vo.UserDeletedAt} [deletedAtVO]
    */
   constructor(
-    private _idVO: vo.UserId,
+    private readonly _idVO: vo.UserId,
     private namesVO: vo.UserNames,
     private surnamesVO: vo.UserSurnames,
     private birthdayVO: vo.UserBirthday,

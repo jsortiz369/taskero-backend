@@ -20,7 +20,6 @@ export interface UserPrimitive {
 
 export type UserCreatePrimitive = Omit<UserPrimitive, 'createdAt' | 'updatedAt' | 'deletedAt' | 'failedAttempts' | 'lockUntil'>;
 
-//export type UserSort = keyof Pick<UserPrimitive, 'names' | 'surnames' | 'phone' | 'email' | 'status' | 'confirmed' | 'createdAt' | 'updatedAt'>;
 export enum UserSort {
   NAMES = 'names',
   SURNAMES = 'surnames',
