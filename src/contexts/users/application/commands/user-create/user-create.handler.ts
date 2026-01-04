@@ -5,6 +5,8 @@ import { IUserCommandRepository, IUserQueryRepository } from 'src/contexts/users
 import { User } from 'src/contexts/users/domain/user';
 import { UserConflictEmailException, UserConflictPhoneException } from 'src/contexts/users/domain/exceptions';
 import { UserPrimitive } from 'src/contexts/users/domain/user.interface';
+import { UserPasswordCreateService } from 'src/contexts/user-passwords/domain/services';
+import { UserPassword } from 'src/contexts/user-passwords/domain/user-password';
 
 type UserCreateResponse = Omit<UserPrimitive, 'deletedAt' | 'failedAttempts' | 'lockUntil'>;
 export class UserCreateHandler {
@@ -18,15 +20,18 @@ export class UserCreateHandler {
    * @param {IBcryptRepository} _bcryptRepository
    * @param {IUserQueryRepository} _userQueryRepository
    * @param {IUserCommandRepository} _userCommandRepository
+   * @param {UserPasswordCreateService} _userPasswordCreateService
    */
   constructor(
     private readonly _uuidRepository: IUuidRepository,
     private readonly _bcryptRepository: IBcryptRepository,
     private readonly _userQueryRepository: IUserQueryRepository,
     private readonly _userCommandRepository: IUserCommandRepository,
+    private readonly _userPasswordCreateService: UserPasswordCreateService,
   ) {}
 
   async execute(command: UserCreateCommand): Promise<UserCreateResponse> {
+    // TODO: entity create user
     const userEntity = User.create({
       _id: this._uuidRepository.generateUuid(),
       names: command.names,
@@ -49,6 +54,16 @@ export class UserCreateHandler {
     // TODO: Create User
     const createUser = await this._userCommandRepository.create(userEntity);
     const userPrimitive = createUser.toValuesPrimitives();
+
+    // TODO: Create User Password
+    await this._userPasswordCreateService.execute(
+      UserPassword.create({
+        _id: this._uuidRepository.generateUuid(),
+        userId: userPrimitive._id,
+        password: await this._bcryptRepository.hash(command.password),
+        isCurrent: true,
+      }),
+    );
 
     return {
       _id: userPrimitive._id,

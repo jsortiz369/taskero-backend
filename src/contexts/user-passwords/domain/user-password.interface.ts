@@ -7,3 +7,5 @@ export interface UserPasswordPrimitive {
   isCurrent: boolean;
   createdAt: Date;
 }
+
+export type UserPasswordCreatePrimitive = Omit<UserPasswordPrimitive, 'createdAt'>;

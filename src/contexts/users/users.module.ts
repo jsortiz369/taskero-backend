@@ -1,19 +1,21 @@
 import { Module } from '@nestjs/common';
 
+import { DatabaseModule } from 'src/shared/database/database.module';
+import { UsersPasswordsModule } from '../user-passwords/users-passwords.module';
+import { UuidModule } from 'src/shared/uuid/uuid.module';
+import { BcryptModule } from 'src/shared/bcrypt/bcrypt.module';
 import { IUserQueryRepository, IUserCommandRepository } from './domain/repositories';
 import { UserQueryRepositoryPostgres, UserCommandRepositoryPostgres } from './infrastructure/persistences';
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
-import { DatabaseModule } from 'src/shared/database/database.module';
 import { IUuidRepository } from 'src/shared/uuid/domain/uuid.repository';
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
-import { UuidModule } from 'src/shared/uuid/uuid.module';
-import { BcryptModule } from 'src/shared/bcrypt/bcrypt.module';
+import { UserPasswordCreateService } from '../user-passwords/domain/services';
 import * as services from './domain/services';
 import * as controllers from './infrastructure/http/controllers';
 import * as handlers from './application';
 
 @Module({
-  imports: [DatabaseModule, UuidModule, BcryptModule],
+  imports: [DatabaseModule, UuidModule, BcryptModule, UsersPasswordsModule],
   controllers: [controllers.UserController],
   providers: [
     {
@@ -61,10 +63,16 @@ import * as handlers from './application';
     },
     {
       provide: handlers.UserCreateHandler,
-      useFactory: (uuid: IUuidRepository, bcrypt: IBcryptRepository, userQuery: IUserQueryRepository, userCommand: IUserCommandRepository) => {
-        return new handlers.UserCreateHandler(uuid, bcrypt, userQuery, userCommand);
+      useFactory: (
+        uuid: IUuidRepository,
+        bcrypt: IBcryptRepository,
+        userQuery: IUserQueryRepository,
+        userCommand: IUserCommandRepository,
+        userPasswordCreateService: UserPasswordCreateService,
+      ) => {
+        return new handlers.UserCreateHandler(uuid, bcrypt, userQuery, userCommand, userPasswordCreateService);
       },
-      inject: [IUuidRepository, IBcryptRepository, IUserQueryRepository, IUserCommandRepository],
+      inject: [IUuidRepository, IBcryptRepository, IUserQueryRepository, IUserCommandRepository, UserPasswordCreateService],
     },
     {
       provide: handlers.UserDeleteHandler,

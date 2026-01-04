@@ -1,6 +1,6 @@
 import { UserId } from 'src/contexts/users/domain/vo';
 import * as vo from './vo';
-import { UserPasswordPrimitive } from './user-password.interface';
+import { UserPasswordCreatePrimitive, UserPasswordPrimitive } from './user-password.interface';
 
 export class UserPassword {
   constructor(
@@ -11,7 +11,7 @@ export class UserPassword {
     private createdAt: Date,
   ) {}
 
-  static create(primitive: UserPasswordPrimitive): UserPassword {
+  static create(primitive: UserPasswordCreatePrimitive): UserPassword {
     const newCreatedAt = new Date();
     return new UserPassword(
       new vo.UserPasswordId(primitive._id),
@@ -55,7 +55,7 @@ export class UserPassword {
     return this.passwordVO;
   }
 
-  get isCurrentPassword(): boolean {
+  get isCurrentValue(): boolean {
     return this.isCurrent;
   }
 
