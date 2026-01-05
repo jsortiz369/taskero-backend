@@ -34,6 +34,16 @@ import * as handlers from './application';
       inject: [IUserQueryRepository],
     },
     {
+      provide: services.UserCheckEmailExistService,
+      useFactory: (userQuery: IUserQueryRepository) => new services.UserCheckEmailExistService(userQuery),
+      inject: [IUserQueryRepository],
+    },
+    {
+      provide: services.UserCheckPhoneExistService,
+      useFactory: (userQuery: IUserQueryRepository) => new services.UserCheckPhoneExistService(userQuery),
+      inject: [IUserQueryRepository],
+    },
+    {
       provide: handlers.UserFindAllHandler,
       useFactory: (userQuery: IUserQueryRepository) => {
         return new handlers.UserFindAllHandler(userQuery);
@@ -47,21 +57,21 @@ import * as handlers from './application';
       },
       inject: [services.UserQueryFindOneByIdService],
     },
-    {
+    /* {
       provide: handlers.UserCheckEmailExistHandler,
       useFactory: (userQuery: IUserQueryRepository) => {
         return new handlers.UserCheckEmailExistHandler(userQuery);
       },
       inject: [IUserQueryRepository],
-    },
-    {
+    }, */
+    /* {
       provide: handlers.UserCheckPhoneExistHandler,
       useFactory: (userQuery: IUserQueryRepository) => {
         return new handlers.UserCheckPhoneExistHandler(userQuery);
       },
       inject: [IUserQueryRepository],
-    },
-    {
+    }, */
+    /* {
       provide: handlers.UserCreateHandler,
       useFactory: (
         uuid: IUuidRepository,
@@ -73,21 +83,22 @@ import * as handlers from './application';
         return new handlers.UserCreateHandler(uuid, bcrypt, userQuery, userCommand, userPasswordCreateService);
       },
       inject: [IUuidRepository, IBcryptRepository, IUserQueryRepository, IUserCommandRepository, UserPasswordCreateService],
-    },
-    {
+    }, */
+    /* {
       provide: handlers.UserDeleteHandler,
       useFactory: (userQueryFindById: services.UserQueryFindOneByIdService, userCommand: IUserCommandRepository) => {
         return new handlers.UserDeleteHandler(userQueryFindById, userCommand);
       },
       inject: [services.UserQueryFindOneByIdService, IUserCommandRepository],
-    },
-    {
+    }, */
+    /* {
       provide: handlers.UserUpdateHandler,
       useFactory: (userQueryFindById: services.UserQueryFindOneByIdService, userQuery: IUserQueryRepository, userCommand: IUserCommandRepository) => {
         return new handlers.UserUpdateHandler(userQueryFindById, userQuery, userCommand);
       },
       inject: [services.UserQueryFindOneByIdService, IUserQueryRepository, IUserCommandRepository],
-    },
+    }, */
   ],
+  exports: [services.UserCheckEmailExistService, services.UserCheckPhoneExistService, services.UserQueryFindOneByIdService],
 })
 export class UsersModule {}
