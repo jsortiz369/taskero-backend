@@ -11,7 +11,7 @@ export class User {
    * @param {vo.UserId} _idVO
    * @param {vo.UserNames} namesVO
    * @param {vo.UserSurnames} surnamesVO
-   * @param {vo.UserBirthday} birthdayVO
+   * @param {vo.UserUsername} usernameVO
    * @param {vo.UserPhone} phoneVO
    * @param {vo.UserEmail} emailVO
    * @param {vo.UserAvatar} avatarVO
@@ -27,7 +27,7 @@ export class User {
     private readonly _idVO: vo.UserId,
     private namesVO: vo.UserNames,
     private surnamesVO: vo.UserSurnames,
-    private birthdayVO: vo.UserBirthday,
+    private usernameVO: vo.UserUsername,
     private phoneVO: vo.UserPhone,
     private emailVO: vo.UserEmail,
     private avatarVO: vo.UserAvatar,
@@ -55,7 +55,7 @@ export class User {
       new vo.UserId(primitive._id),
       new vo.UserNames(primitive.names),
       new vo.UserSurnames(primitive.surnames),
-      new vo.UserBirthday(primitive.birthday),
+      new vo.UserUsername(primitive.username),
       new vo.UserPhone(primitive.phone),
       new vo.UserEmail(primitive.email),
       new vo.UserAvatar(primitive.avatar),
@@ -83,7 +83,7 @@ export class User {
       new vo.UserId(primitive._id),
       new vo.UserNames(primitive.names),
       new vo.UserSurnames(primitive.surnames),
-      new vo.UserBirthday(primitive.birthday),
+      new vo.UserUsername(primitive.username),
       new vo.UserPhone(primitive.phone),
       new vo.UserEmail(primitive.email),
       new vo.UserAvatar(primitive.avatar),
@@ -109,7 +109,7 @@ export class User {
       _id: this._idVO._value,
       names: this.namesVO._value,
       surnames: this.surnamesVO._value,
-      birthday: this.birthdayVO._value,
+      username: this.usernameVO._value,
       phone: this.phoneVO._value,
       email: this.emailVO._value,
       avatar: this.avatarVO._value,
@@ -137,8 +137,8 @@ export class User {
     return this.surnamesVO;
   }
 
-  get birthday(): vo.UserBirthday {
-    return this.birthdayVO;
+  get username(): vo.UserUsername {
+    return this.usernameVO;
   }
 
   get phone(): vo.UserPhone {
@@ -192,8 +192,8 @@ export class User {
     this.updatedAt = new Date();
   }
 
-  set birthday(birthday: InstanceType<typeof vo.UserBirthday>['_value']) {
-    this.birthdayVO = new vo.UserBirthday(birthday);
+  set username(birthday: InstanceType<typeof vo.UserUsername>['_value']) {
+    this.usernameVO = new vo.UserUsername(birthday);
     this.updatedAt = new Date();
   }
 

@@ -27,7 +27,7 @@ CREATE TABLE "system"."users" (
     "_id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "names" VARCHAR(50) NOT NULL,
     "surnames" VARCHAR(50) NOT NULL,
-    "birthday" DATE NOT NULL,
+    "username" VARCHAR(20) NOT NULL,
     "phone" VARCHAR(25) NOT NULL,
     "email" VARCHAR(100) NOT NULL,
     "avatar" VARCHAR(255),
@@ -44,6 +44,9 @@ CREATE TABLE "system"."users" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_passwords_user_id_key" ON "system"."users_passwords"("user_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_username_key" ON "system"."users"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_phone_key" ON "system"."users"("phone");

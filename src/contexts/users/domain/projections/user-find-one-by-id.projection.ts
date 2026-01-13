@@ -11,7 +11,7 @@ export class UserFindOneByIdProjection implements TypeProjection {
    * @param {NonNullable<Required<TypeProjection['_id']>>} _id
    * @param {TypeProjection['names']} names
    * @param {TypeProjection['surnames']} surnames
-   * @param {TypeProjection['birthday']} birthday
+   * @param {TypeProjection['username']} username
    * @param {TypeProjection['phone']} phone
    * @param {TypeProjection['email']} email
    * @param {TypeProjection['avatar']} avatar
@@ -24,7 +24,7 @@ export class UserFindOneByIdProjection implements TypeProjection {
     readonly _id: NonNullable<Required<TypeProjection['_id']>>,
     readonly names: TypeProjection['names'],
     readonly surnames: TypeProjection['surnames'],
-    readonly birthday: TypeProjection['birthday'],
+    readonly username: TypeProjection['username'],
     readonly phone: TypeProjection['phone'],
     readonly email: TypeProjection['email'],
     readonly avatar: TypeProjection['avatar'],

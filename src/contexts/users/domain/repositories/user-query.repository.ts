@@ -26,6 +26,18 @@ export abstract class IUserQueryRepository {
   abstract findOneById(id: string): Promise<Nullable<UserFindOneByIdProjection>>;
 
   /**
+   * @description Check if username exist
+   * @date 2026-01-12 20:32:44
+   * @author Jogan Ortiz Muñoz
+   *
+   * @abstract
+   * @param {string} username
+   * @param {?string} [id]
+   * @returns {Promise<boolean>}
+   */
+  abstract conflictUsername(username: string, id?: string): Promise<boolean>;
+
+  /**
    * @description Check if email exist
    * @date 2025-12-26 10:04:21
    * @author Jogan Ortiz Muñoz
@@ -35,7 +47,7 @@ export abstract class IUserQueryRepository {
    * @param {?string} [id]
    * @returns {Promise<boolean>}
    */
-  abstract checkEmailExist(email: string, id?: string): Promise<boolean>;
+  abstract conflictEmail(email: string, id?: string): Promise<boolean>;
 
   /**
    * @description Check if phone exist
@@ -47,5 +59,5 @@ export abstract class IUserQueryRepository {
    * @param {?string} [id]
    * @returns {Promise<boolean>}
    */
-  abstract checkPhoneExist(phone: string, id?: string): Promise<boolean>;
+  abstract conflictPhone(phone: string, id?: string): Promise<boolean>;
 }

@@ -1,3 +1,5 @@
 export { UserQueryFindOneByIdService } from './user-query-find-one-by-id.service';
-export { UserCheckEmailExistService } from './user-check-email-exist.service';
-export { UserCheckPhoneExistService } from './user-check-phone-exist.service';
+export { UserConflictUsernameService } from './user-conflict-username.service';
+export { UserConflictEmailService } from './user-conflict-email.service';
+export { UserConflictPhoneService } from './user-conflict-phone.service';
+export { UserCreateService } from './user-create.service';

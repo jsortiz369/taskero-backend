@@ -12,6 +12,6 @@ export class UserStatus extends BooleanValueObject<UserStatusProps> {
    * @param {UserStatusProps} value
    */
   constructor(value: UserStatusProps) {
-    super(value, 'The user status value must be a boolean');
+    super(value, 'El estado del usuario no es válido, debe ser true o false.');
   }
 }

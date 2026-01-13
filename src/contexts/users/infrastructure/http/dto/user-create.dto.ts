@@ -1,41 +1,35 @@
-import { Type } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsString, Length, Matches } from 'class-validator';
+import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
 
 import { REGEX } from 'src/shared/system/domain/constants';
 
 export class UserCreateDto {
-  @IsString({ message: 'The names is not valid must be a string' })
-  @IsNotEmpty({ message: 'The names is not empty' })
-  @Length(1, 50, { message: 'The names must be between 1 and 50 characters' })
-  @Matches(REGEX.LETTER_NUMBER_SPACE, { message: 'The names not valid must be letters, numbers and space' })
+  @IsString({ message: 'Los nombres no son válidos, debe ser cadena de texto.' })
+  @IsNotEmpty({ message: 'Los nombres no deben estar vacíos.' })
   readonly names: string;
 
-  @IsString({ message: 'The surnames is not valid must be a string' })
-  @IsNotEmpty({ message: 'The surnames is not empty' })
-  @Length(1, 50, { message: 'The surnames must be between 1 and 50 characters' })
-  @Matches(REGEX.LETTER_NUMBER_SPACE, { message: 'The surnames not valid must be letters, numbers and space' })
+  @IsString({ message: 'Los apellidos no son válidos, debe ser cadena de texto.' })
+  @IsNotEmpty({ message: 'Los apellidos no deben estar vacíos.' })
   readonly surnames: string;
 
-  @IsDate({ message: 'The birthday is not valid must be a date' })
-  @Type(() => Date)
-  @IsNotEmpty({ message: 'The birthday is not empty' })
-  readonly birthday: Date;
+  @IsString({ message: 'El nombre de usuario no es válido, debe ser cadena de texto.' })
+  @IsNotEmpty({ message: 'El nombre de usuario no debe estar vacío.' })
+  readonly username: string;
 
-  @IsString({ message: 'The phone is not valid must be a string' })
-  @IsNotEmpty({ message: 'The phone is not empty' })
+  @IsString({ message: 'El teléfono no es válido, debe ser cadena de texto.' })
+  @IsNotEmpty({ message: 'El teléfono no debe estar vacío.' })
   readonly phone: string;
 
-  @IsString({ message: 'The email is not valid must be a string' })
-  @IsNotEmpty({ message: 'The email is not empty' })
-  @Matches(REGEX.EMAIL, { message: 'The email not valid must be a email' })
-  @Length(1, 100, { message: 'The email must be between 1 and 100 characters' })
+  @IsString({ message: 'El correo electrónico no es válido, debe ser cadena de texto.' })
+  @IsNotEmpty({ message: 'El correo electrónico no debe estar vacío.' })
+  @Matches(REGEX.EMAIL, { message: 'El correo electrónico no es válido.' })
   readonly email: string;
 
-  @IsString({ message: 'The password is not valid must be a string' })
-  @IsNotEmpty({ message: 'The password is not empty' })
-  @Length(8, 20, { message: 'The password must be between 8 and 20 characters' })
+  @IsString({ message: 'La contraseña no es válida, debe ser cadena de texto.' })
+  @IsNotEmpty({ message: 'La contraseña no debe estar vacía.' })
+  @Length(8, 64, { message: 'La contraseña debe tener entre 8 y 64 caracteres.' })
   @Matches(REGEX.PASSWORD, {
-    message: 'The password not valid. At least one lowercase letter, one uppercase letter, one digit, one special character, length between 8 and 64',
+    message:
+      'La contraseña debe tener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial. El largo debe ser de 8 a 64 caracteres.',
   })
   readonly password: string;
 }

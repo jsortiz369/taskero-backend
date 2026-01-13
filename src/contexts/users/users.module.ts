@@ -34,14 +34,42 @@ import * as handlers from './application';
       inject: [IUserQueryRepository],
     },
     {
-      provide: services.UserCheckEmailExistService,
-      useFactory: (userQuery: IUserQueryRepository) => new services.UserCheckEmailExistService(userQuery),
+      provide: services.UserConflictUsernameService,
+      useFactory: (userQuery: IUserQueryRepository) => new services.UserConflictUsernameService(userQuery),
       inject: [IUserQueryRepository],
     },
     {
-      provide: services.UserCheckPhoneExistService,
-      useFactory: (userQuery: IUserQueryRepository) => new services.UserCheckPhoneExistService(userQuery),
+      provide: services.UserConflictEmailService,
+      useFactory: (userQuery: IUserQueryRepository) => new services.UserConflictEmailService(userQuery),
       inject: [IUserQueryRepository],
+    },
+    {
+      provide: services.UserConflictPhoneService,
+      useFactory: (userQuery: IUserQueryRepository) => new services.UserConflictPhoneService(userQuery),
+      inject: [IUserQueryRepository],
+    },
+    {
+      provide: services.UserCreateService,
+      useFactory: (
+        uuid: IUuidRepository,
+        conflictUsername: services.UserConflictUsernameService,
+        conflictEmail: services.UserConflictEmailService,
+        conflictPhone: services.UserConflictPhoneService,
+        bcrypt: IBcryptRepository,
+        userCommand: IUserCommandRepository,
+        userPasswordCreateService: UserPasswordCreateService,
+      ) => {
+        return new services.UserCreateService(uuid, conflictUsername, conflictEmail, conflictPhone, bcrypt, userCommand, userPasswordCreateService);
+      },
+      inject: [
+        IUuidRepository,
+        services.UserConflictUsernameService,
+        services.UserConflictEmailService,
+        services.UserConflictPhoneService,
+        IBcryptRepository,
+        IUserCommandRepository,
+        UserPasswordCreateService,
+      ],
     },
     {
       provide: handlers.UserFindAllHandler,
@@ -57,48 +85,13 @@ import * as handlers from './application';
       },
       inject: [services.UserQueryFindOneByIdService],
     },
-    /* {
-      provide: handlers.UserCheckEmailExistHandler,
-      useFactory: (userQuery: IUserQueryRepository) => {
-        return new handlers.UserCheckEmailExistHandler(userQuery);
-      },
-      inject: [IUserQueryRepository],
-    }, */
-    /* {
-      provide: handlers.UserCheckPhoneExistHandler,
-      useFactory: (userQuery: IUserQueryRepository) => {
-        return new handlers.UserCheckPhoneExistHandler(userQuery);
-      },
-      inject: [IUserQueryRepository],
-    }, */
-    /* {
-      provide: handlers.UserCreateHandler,
-      useFactory: (
-        uuid: IUuidRepository,
-        bcrypt: IBcryptRepository,
-        userQuery: IUserQueryRepository,
-        userCommand: IUserCommandRepository,
-        userPasswordCreateService: UserPasswordCreateService,
-      ) => {
-        return new handlers.UserCreateHandler(uuid, bcrypt, userQuery, userCommand, userPasswordCreateService);
-      },
-      inject: [IUuidRepository, IBcryptRepository, IUserQueryRepository, IUserCommandRepository, UserPasswordCreateService],
-    }, */
-    /* {
-      provide: handlers.UserDeleteHandler,
-      useFactory: (userQueryFindById: services.UserQueryFindOneByIdService, userCommand: IUserCommandRepository) => {
-        return new handlers.UserDeleteHandler(userQueryFindById, userCommand);
-      },
-      inject: [services.UserQueryFindOneByIdService, IUserCommandRepository],
-    }, */
-    /* {
-      provide: handlers.UserUpdateHandler,
-      useFactory: (userQueryFindById: services.UserQueryFindOneByIdService, userQuery: IUserQueryRepository, userCommand: IUserCommandRepository) => {
-        return new handlers.UserUpdateHandler(userQueryFindById, userQuery, userCommand);
-      },
-      inject: [services.UserQueryFindOneByIdService, IUserQueryRepository, IUserCommandRepository],
-    }, */
   ],
-  exports: [services.UserCheckEmailExistService, services.UserCheckPhoneExistService, services.UserQueryFindOneByIdService],
+  exports: [
+    services.UserConflictUsernameService,
+    services.UserConflictEmailService,
+    services.UserConflictPhoneService,
+    services.UserQueryFindOneByIdService,
+    services.UserCreateService,
+  ],
 })
 export class UsersModule {}

@@ -12,6 +12,6 @@ export class UserConfirmed extends BooleanValueObject<UserConfirmedProps> {
    * @param {UserConfirmedProps} value
    */
   constructor(value: UserConfirmedProps) {
-    super(value, 'The user confirmed value must be a boolean');
+    super(value, 'El estado de confirmación del usuario no es válido, debe ser true o false.');
   }
 }

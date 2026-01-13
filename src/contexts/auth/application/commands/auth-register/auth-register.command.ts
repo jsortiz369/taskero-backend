@@ -7,10 +7,10 @@ type TypeCommand = Omit<
   password: string;
 };
 
-export class UserCreateCommand implements TypeCommand {
+export class AuthRegisterCommand implements TypeCommand {
   /**
-   * Creates an instance of UserCreateCommand.
-   * @date 2025-12-26 07:17:19
+   * Creates an instance of AuthRegisterCommand.
+   * @date 2026-01-08 20:05:59
    * @author Jogan Ortiz Muñoz
    *
    * @constructor

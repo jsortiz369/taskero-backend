@@ -9,6 +9,6 @@ export class UserNotFoundException extends NotFoundException {
    * @constructor
    */
   constructor() {
-    super('User not found');
+    super('No se ha encontrado el usuario.');
   }
 }

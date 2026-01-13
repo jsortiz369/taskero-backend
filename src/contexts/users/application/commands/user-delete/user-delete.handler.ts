@@ -4,7 +4,7 @@ import { UserQueryFindOneByIdService } from 'src/contexts/users/domain/services'
 import { IUserCommandRepository } from 'src/contexts/users/domain/repositories';
 import { UserId } from 'src/contexts/users/domain/vo';
 
-type UserCreateResponse = Pick<UserPrimitive, '_id' | 'names' | 'surnames' | 'birthday' | 'phone' | 'email' | 'createdAt' | 'updatedAt'>;
+type UserCreateResponse = Pick<UserPrimitive, '_id' | 'names' | 'surnames' | 'username' | 'phone' | 'email' | 'createdAt' | 'updatedAt'>;
 export class UserDeleteHandler {
   /**
    * Creates an instance of UserDeleteHandler.
@@ -32,7 +32,7 @@ export class UserDeleteHandler {
       _id: userPrimitive._id,
       names: userPrimitive.names,
       surnames: userPrimitive.surnames,
-      birthday: userPrimitive.birthday,
+      username: userPrimitive.username,
       phone: userPrimitive.phone,
       email: userPrimitive.email,
       createdAt: userPrimitive.createdAt,

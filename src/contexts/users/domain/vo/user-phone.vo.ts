@@ -13,9 +13,9 @@ export class UserPhone extends StringValueObject<UserPhoneProp> {
    * @param {UserPhoneProp} value
    */
   constructor(value: UserPhoneProp) {
-    super(value, 'The phone is not valid must be a string');
+    super(value, 'El teléfono no es válido, debe ser cadena de texto.');
 
-    this.ensureNotEmpty('The phone is not empty'); // Not empty string
-    this.ensureIsFulfillRegExp(REGEX.PHONE, 'The phone not valid must be a phone'); // Only letters and numbers
+    this.ensureNotEmpty('El teléfono no debe estar vacío'); // Not empty string
+    this.ensureIsFulfillRegExp(REGEX.PHONE, 'El teléfono no es válido'); // Only letters and numbers
   }
 }

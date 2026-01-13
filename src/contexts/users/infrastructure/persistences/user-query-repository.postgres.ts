@@ -37,7 +37,7 @@ export class UserQueryRepositoryPostgres implements IUserQueryRepository {
     const fieldFilter: FieldSearchType<Prisma.UserScalarFieldEnum>[] = [
       { field: 'names', type: 'string' },
       { field: 'surnames', type: 'string' },
-      { field: 'birthday', type: 'Date' },
+      { field: 'username', type: 'string' },
       { field: 'phone', type: 'string' },
       { field: 'email', type: 'string' },
       { field: 'status', type: 'boolean', callback: (_) => this.validateBolean(_) },
@@ -86,13 +86,13 @@ export class UserQueryRepositoryPostgres implements IUserQueryRepository {
             _.id,
             _.names,
             _.surnames,
-            _.birthday,
+            _.username,
             _.phone,
             _.email,
             _.status,
             _.confirmed,
             _.avatar,
-            _.lockUntil as Date | null,
+            _.lockUntil,
             _.createdAt,
             _.updatedAt,
           ),
@@ -121,7 +121,7 @@ export class UserQueryRepositoryPostgres implements IUserQueryRepository {
       result.id,
       result.names,
       result.surnames,
-      result.birthday,
+      result.username,
       result.phone,
       result.email,
       result.avatar,
@@ -130,6 +130,24 @@ export class UserQueryRepositoryPostgres implements IUserQueryRepository {
       result.createdAt,
       result.updatedAt,
     );
+  }
+
+  /**
+   * @description Check if username exist
+   * @date 2026-01-12 20:33:23
+   * @author Jogan Ortiz Muñoz
+   *
+   * @async
+   * @param {string} username
+   * @param {?string} [id]
+   * @returns {Promise<boolean>}
+   */
+  async conflictUsername(username: string, id?: string): Promise<boolean> {
+    const result = await this._prisma.user.findFirst({
+      where: { username, id: { not: id }, deletedAt: null },
+      select: { id: true },
+    });
+    return result !== null;
   }
 
   /**
@@ -142,7 +160,7 @@ export class UserQueryRepositoryPostgres implements IUserQueryRepository {
    * @param {?string} [id]
    * @returns {Promise<boolean>}
    */
-  async checkEmailExist(email: string, id?: string): Promise<boolean> {
+  async conflictEmail(email: string, id?: string): Promise<boolean> {
     const result = await this._prisma.user.findFirst({
       where: { email, id: { not: id }, deletedAt: null },
       select: { id: true },
@@ -160,7 +178,7 @@ export class UserQueryRepositoryPostgres implements IUserQueryRepository {
    * @param {?string} [id]
    * @returns {Promise<boolean>}
    */
-  async checkPhoneExist(phone: string, id?: string): Promise<boolean> {
+  async conflictPhone(phone: string, id?: string): Promise<boolean> {
     const result = await this._prisma.user.findFirst({
       where: { phone, id: { not: id }, deletedAt: null },
       select: { id: true },

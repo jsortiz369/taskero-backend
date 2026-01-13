@@ -1,8 +1,8 @@
 import { UserPrimitive } from 'src/contexts/users/domain/user.interface';
 
-export class AuthRegisterCheckEmailExistQuery {
+export class AuthRegisterConflictEmailQuery {
   /**
-   * Creates an instance of AuthRegisterEmailExistQuery.
+   * Creates an instance of AuthRegisterConflictEmailQuery.
    * @date 2026-01-05 06:32:09
    * @author Jogan Ortiz Muñoz
    *

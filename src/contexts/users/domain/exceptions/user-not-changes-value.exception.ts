@@ -9,6 +9,6 @@ export class UserNotChangesValueException extends BadRequestException {
    * @constructor
    */
   constructor() {
-    super('User not changes value');
+    super('No se han realizado cambios en el usuario.');
   }
 }

@@ -13,11 +13,11 @@ export class UserNames extends StringValueObject<UserNamesProp> {
    * @param {UserNamesProp} value
    */
   constructor(value: UserNamesProp) {
-    super(value, 'The names is not valid must be a string');
+    super(value, 'Los nombres no son válidos, debe ser cadena de texto.');
 
-    this.ensureIsDefined('The names is required'); // Not null or undefined
-    this.ensureNotEmpty('The names is not empty'); // Not empty string
-    this.ensureIsFulfillRegExp(REGEX.LETTER_NUMBER_SPACE, 'The names not valid must be letters, numbers and space'); // Only letters and numbers
-    this.length(1, 50, 'The names must be between 1 and 50 characters'); // Length between 1 and 50 characters
+    this.ensureIsDefined('Los nombres es requerido.'); // Not null or undefined
+    this.ensureNotEmpty('Los nombres no deben estar vacíos.'); // Not empty string
+    this.ensureIsFulfillRegExp(REGEX.LETTER_NUMBER_SPACE, 'Nombres no válidos, deben ser letras, números y espacios.'); // Only letters and numbers
+    this.length(1, 50, 'Los nombres deben tener entre 1 y 50 caracteres.'); // Length between 1 and 50 characters
   }
 }

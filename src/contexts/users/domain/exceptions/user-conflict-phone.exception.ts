@@ -1,6 +1,6 @@
-import { BadRequestException } from '@nestjs/common';
+import { ConflictException } from '@nestjs/common';
 
-export class UserConflictPhoneException extends BadRequestException {
+export class UserConflictPhoneException extends ConflictException {
   /**
    * Creates an instance of UserConflictPhoneException.
    * @date 2025-12-25 20:55:41
@@ -9,6 +9,6 @@ export class UserConflictPhoneException extends BadRequestException {
    * @constructor
    */
   constructor() {
-    super('User exist by phone');
+    super('Ya existe un usuario con este teléfono.');
   }
 }

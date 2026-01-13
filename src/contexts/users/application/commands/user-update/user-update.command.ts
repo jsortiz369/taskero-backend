@@ -13,7 +13,7 @@ export class UserUpdateCommand implements Partial<UserCreateCommand> {
    * @constructor
    * @param {TypeCommand['names']} names
    * @param {TypeCommand['surnames']} surnames
-   * @param {TypeCommand['birthday']} birthday
+   * @param {TypeCommand['username']} username
    * @param {TypeCommand['phone']} phone
    * @param {TypeCommand['email']} email
    * @param {TypeCommand['status']} status
@@ -22,7 +22,7 @@ export class UserUpdateCommand implements Partial<UserCreateCommand> {
   constructor(
     readonly names: TypeCommand['names'],
     readonly surnames: TypeCommand['surnames'],
-    readonly birthday: TypeCommand['birthday'],
+    readonly username: TypeCommand['username'],
     readonly phone: TypeCommand['phone'],
     readonly email: TypeCommand['email'],
     readonly status: TypeCommand['status'],

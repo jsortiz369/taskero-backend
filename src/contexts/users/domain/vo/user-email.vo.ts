@@ -13,11 +13,11 @@ export class UserEmail extends StringValueObject<UserEmailProp> {
    * @param {UserEmailProp} value
    */
   constructor(value: UserEmailProp) {
-    super(value, 'The email is not valid must be a string');
+    super(value, 'El correo electrónica no es válido, debe ser cadena de texto.');
 
-    this.ensureIsDefined('The email is required'); // Not null or undefined
-    this.ensureNotEmpty('The email is not empty'); // Not empty string
-    this.ensureIsFulfillRegExp(REGEX.EMAIL, 'The email not valid must be a email'); // Only letters and numbers
-    this.length(1, 100, 'The email must be between 1 and 100 characters'); // Length between 1 and 100 characters
+    this.ensureIsDefined('El correo electrónica es requerido'); // Not null or undefined
+    this.ensureNotEmpty('El correo electrónica no debe estar vacío'); // Not empty string
+    this.ensureIsFulfillRegExp(REGEX.EMAIL, 'El correo electrónica no es válido'); // Only letters and numbers
+    this.length(1, 100, 'El correo electrónica debe tener entre 1 y 100 caracteres'); // Length between 1 and 100 characters
   }
 }

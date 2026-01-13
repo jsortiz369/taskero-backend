@@ -1,6 +1,6 @@
-import { BadRequestException } from '@nestjs/common';
+import { ConflictException } from '@nestjs/common';
 
-export class UserConflictEmailException extends BadRequestException {
+export class UserConflictEmailException extends ConflictException {
   /**
    * Creates an instance of UserConflictEmailException.
    * @date 2025-12-25 20:55:15
@@ -9,6 +9,6 @@ export class UserConflictEmailException extends BadRequestException {
    * @constructor
    */
   constructor() {
-    super('User exist by email');
+    super('Ya existe un usuario con este correo.');
   }
 }

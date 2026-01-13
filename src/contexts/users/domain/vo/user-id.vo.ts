@@ -12,6 +12,6 @@ export class UserId extends UuidValueObject {
    * @param {UserIdProp} value
    */
   constructor(value: UserIdProp) {
-    super(value, 'The id is not valid must be a uuid'); // Validate UUID format
+    super(value, 'El id del usuario no es válido, debe ser un uuid.'); // Validate UUID format
   }
 }

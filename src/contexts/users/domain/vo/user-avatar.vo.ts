@@ -12,8 +12,8 @@ export class UserAvatar extends StringValueObject<UserAvatarProp> {
    * @param {UserAvatarProp} value
    */
   constructor(value: UserAvatarProp) {
-    super(value, 'The avatar is not valid');
+    super(value, 'El avatar no es válido, debe ser cadena de texto.');
 
-    this.maxLength(255, 'The avatar must be at most 255 characters long');
+    this.maxLength(255, 'El avatar debe tener menos de 255 caracteres');
   }
 }

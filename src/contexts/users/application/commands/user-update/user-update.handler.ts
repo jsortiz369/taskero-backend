@@ -35,7 +35,7 @@ export class UserUpdateHandler {
         _id: user._id,
         names: user.names,
         surnames: user.surnames,
-        birthday: user.birthday,
+        username: user.username,
         phone: user.phone,
         email: user.email,
         status: user.status,
@@ -47,13 +47,13 @@ export class UserUpdateHandler {
 
     // TODO: Validate existing user by email
     if (command.email) {
-      const existEmail = await this._userQueryRepository.checkEmailExist(command.email, idCommand._id);
+      const existEmail = await this._userQueryRepository.conflictEmail(command.email, idCommand._id);
       if (existEmail) throw new UserConflictEmailException();
     }
 
     // TODO Validate existing user by phone
     if (command.phone) {
-      const existPhone = await this._userQueryRepository.checkPhoneExist(command.phone, idCommand._id);
+      const existPhone = await this._userQueryRepository.conflictPhone(command.phone, idCommand._id);
       if (existPhone) throw new UserConflictPhoneException();
     }
 
@@ -65,7 +65,7 @@ export class UserUpdateHandler {
       _id: userPrimitive._id,
       names: userPrimitive.names,
       surnames: userPrimitive.surnames,
-      birthday: userPrimitive.birthday,
+      username: userPrimitive.username,
       phone: userPrimitive.phone,
       email: userPrimitive.email,
       avatar: userPrimitive.avatar,
@@ -92,8 +92,8 @@ export class UserUpdateHandler {
     }
 
     // validate users birthday
-    if (command.birthday && command.birthday !== user.birthday._value) {
-      user.birthday = command.birthday;
+    if (command.username && command.username !== user.username._value) {
+      user.username = command.username;
       checkChanges = true;
     }
 

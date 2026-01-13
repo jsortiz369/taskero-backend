@@ -5,7 +5,7 @@ export interface UserPrimitive {
   _id: string;
   names: string;
   surnames: string;
-  birthday: Date;
+  username: string;
   phone: string;
   email: string;
   avatar?: string | null;
