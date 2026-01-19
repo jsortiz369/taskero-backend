@@ -23,6 +23,8 @@ export abstract class IUserCommandRepository {
    */
   abstract update(data: User): Promise<User>;
 
+  abstract updateLoginAttempts(_id: UserId, attempts: number): Promise<void>;
+
   /**
    * @description Delete user by Id
    * @date 2025-12-25 20:59:52

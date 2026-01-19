@@ -1,11 +1,12 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query } from '@nestjs/common';
 
 import { ROUTES } from 'src/app/http/routes';
-import { AuthRegisterConflictDto, AuthRegisterDto } from '../dto';
+import { AuthLoginDto, AuthRegisterConflictDto, AuthRegisterDto } from '../dto';
 import * as checkUsername from 'src/contexts/auth/application/queries/auth-register-conflict-username';
 import * as checkEmail from 'src/contexts/auth/application/queries/auth-register-conflict-email';
 import * as checkPhone from 'src/contexts/auth/application/queries/auth-register-conflict-phone';
 import * as register from 'src/contexts/auth/application/commands/auth-register';
+import * as login from 'src/contexts/auth/application/commands/auth-login';
 
 @Controller(ROUTES.AUTH)
 export class AuthController {
@@ -14,12 +15,8 @@ export class AuthController {
     private readonly _registerConflictEmailExistHandler: checkEmail.AuthRegisterConflictEmailHandler,
     private readonly _registerConflictPhoneExistHandler: checkPhone.AuthRegisterConflictPhoneHandler,
     private readonly _registerHandler: register.AuthRegisterHandler,
+    private readonly _loginHandler: login.AuthLoginHandler,
   ) {}
-
-  @Post('/login')
-  login() {
-    return 'controller login';
-  }
 
   @Get('/register/conflict/username')
   async conflictUsername(@Query() query: AuthRegisterConflictDto) {
@@ -34,6 +31,12 @@ export class AuthController {
   @Get('/register/conflict/phone')
   async conflictPhone(@Query() query: AuthRegisterConflictDto) {
     return await this._registerConflictPhoneExistHandler.execute(new checkPhone.AuthRegisterConflictPhoneQuery(query.value));
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('/login')
+  async login(@Body() body: AuthLoginDto) {
+    return await this._loginHandler.execute(new login.AuthLoginCommand(body.username, body.password));
   }
 
   @Post('/register')

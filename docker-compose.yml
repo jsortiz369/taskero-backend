@@ -16,6 +16,20 @@ services:
       timeout: 5s
       retries: 5
 
+  taskero-backend_redis:
+    image: redis:7.0.11-alpine
+    container_name: 'taskero-backend_redis'
+    ports:
+      - '${REDIS_PORT}:6379'
+    depends_on:
+      taskero-backend_db:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
   taskero-backend_app:
     build:
       context: .
@@ -32,5 +46,5 @@ services:
     env_file:
       - .env
     depends_on:
-      taskero-backend_db:
+      taskero-backend_redis:
         condition: service_healthy

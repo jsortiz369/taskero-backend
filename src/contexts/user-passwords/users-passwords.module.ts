@@ -1,17 +1,16 @@
 import { Module } from '@nestjs/common';
 
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
-import { DatabaseModule } from 'src/shared/database/database.module';
+import { UserPasswordCommandRepositoryPostgres, UserPasswordQueryRepositoryPostgres } from './infrastructure/persistences';
+import { IUserPasswordCommandRepository, IUserPasswordQueryRepository } from './domain/repositories';
 import * as services from './domain/services';
-import { IUserPasswordCommandRepository } from './domain/repositories/user-password-command.repository';
-import { UserPasswordCommandRepositoryPostgres } from './infrastructure/persistences';
 
 /* 
 import * as controllers from './infrastructure/http/controllers';
 import * as handlers from './application'; */
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [],
   controllers: [],
   providers: [
     {
@@ -20,11 +19,21 @@ import * as handlers from './application'; */
       inject: [PrismaRepository],
     },
     {
+      provide: IUserPasswordQueryRepository,
+      useFactory: (prisma: PrismaRepository) => new UserPasswordQueryRepositoryPostgres(prisma),
+      inject: [PrismaRepository],
+    },
+    {
       provide: services.UserPasswordCreateService,
       useFactory: (userCommand: IUserPasswordCommandRepository) => new services.UserPasswordCreateService(userCommand),
       inject: [IUserPasswordCommandRepository],
     },
+    {
+      provide: services.UserPasswordByIdUserService,
+      useFactory: (userQuery: IUserPasswordQueryRepository) => new services.UserPasswordByIdUserService(userQuery),
+      inject: [IUserPasswordQueryRepository],
+    },
   ],
-  exports: [services.UserPasswordCreateService],
+  exports: [services.UserPasswordCreateService, services.UserPasswordByIdUserService],
 })
 export class UsersPasswordsModule {}

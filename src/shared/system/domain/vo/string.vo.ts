@@ -13,9 +13,11 @@ export abstract class StringValueObject<T extends string | undefined | null> {
    * @param {T} value
    * @param {string} message
    */
-  protected constructor(value: T, message: string) {
+  protected constructor(value: T, message: string, config?: { capitalize?: boolean }) {
+    value = (!value ? value : value.replace(/\s+/g, ' ').trim()) as T;
     this._value = value;
     this.isString(message); // Ensure the value is a string
+    if (config && config.capitalize) this._value = this.capitalize();
   }
 
   /**
@@ -93,6 +95,13 @@ export abstract class StringValueObject<T extends string | undefined | null> {
    */
   protected maxLength(max: number, message: string) {
     if (this.max(max)) throw new InvalidValueException(message);
+  }
+
+  protected capitalize(): T {
+    if (typeof this._value !== 'string') return this._value;
+
+    const textSplit = this._value.split(' ').filter((word) => word !== '');
+    return textSplit.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ') as T;
   }
 
   /**

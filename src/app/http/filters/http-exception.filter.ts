@@ -24,7 +24,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
-      error.message = exception.getResponse()['message'] as string[];
+      const response: string | object = exception.getResponse();
+      error.message = typeof response === 'string' ? response : response['message'];
     }
 
     this._logger.error(`${request.method} ${request.url} ${statusCode} ${exception.message}`, exception.stack, 'HTTP');

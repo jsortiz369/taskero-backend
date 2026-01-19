@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { DatabaseModule } from 'src/shared/database/database.module';
 import { UsersPasswordsModule } from '../user-passwords/users-passwords.module';
 import { UuidModule } from 'src/shared/uuid/uuid.module';
 import { BcryptModule } from 'src/shared/bcrypt/bcrypt.module';
@@ -15,7 +14,7 @@ import * as controllers from './infrastructure/http/controllers';
 import * as handlers from './application';
 
 @Module({
-  imports: [DatabaseModule, UuidModule, BcryptModule, UsersPasswordsModule],
+  imports: [UuidModule, BcryptModule, UsersPasswordsModule],
   controllers: [controllers.UserController],
   providers: [
     {
@@ -72,6 +71,20 @@ import * as handlers from './application';
       ],
     },
     {
+      provide: services.UserUpdateFailedAttemptsByIdService,
+      useFactory: (userCommand: IUserCommandRepository) => {
+        return new services.UserUpdateFailedAttemptsByIdService(userCommand);
+      },
+      inject: [IUserCommandRepository],
+    },
+    {
+      provide: services.UserLoginService,
+      useFactory: (userQuery: IUserQueryRepository) => {
+        return new services.UserLoginService(userQuery);
+      },
+      inject: [IUserQueryRepository, IUserCommandRepository],
+    },
+    {
       provide: handlers.UserFindAllHandler,
       useFactory: (userQuery: IUserQueryRepository) => {
         return new handlers.UserFindAllHandler(userQuery);
@@ -92,6 +105,8 @@ import * as handlers from './application';
     services.UserConflictPhoneService,
     services.UserQueryFindOneByIdService,
     services.UserCreateService,
+    services.UserUpdateFailedAttemptsByIdService,
+    services.UserLoginService,
   ],
 })
 export class UsersModule {}

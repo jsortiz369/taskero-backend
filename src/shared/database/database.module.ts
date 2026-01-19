@@ -1,13 +1,13 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 
 import { LoggerModule } from '../logger/logger.module';
-import { EnvModule } from '../env/env.module';
 import { PrismaRepository } from './infrastructure/persistences';
 import { IEnvRepository } from '../env/domain/env.repository';
 import { ILoggerRepository } from '../logger/domain/logger.repository';
 
+@Global()
 @Module({
-  imports: [LoggerModule, EnvModule],
+  imports: [LoggerModule],
   providers: [
     {
       provide: PrismaRepository,

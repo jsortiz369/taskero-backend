@@ -6,6 +6,7 @@ import { UserFindAllProjection, UserFindOneByIdProjection } from '../../domain/p
 import { DataFindAll, Nullable } from 'src/shared/system/domain/system.interface';
 import { UserFindAll, UserFindAllFilters } from '../../domain/user.interface';
 import { FieldSearchType } from 'src/shared/database/domain/database.interface';
+import { UserLoginProjection } from '../../domain/projections/user-login.projection';
 
 export class UserQueryRepositoryPostgres implements IUserQueryRepository {
   /**
@@ -129,6 +130,28 @@ export class UserQueryRepositoryPostgres implements IUserQueryRepository {
       result.status,
       result.createdAt,
       result.updatedAt,
+    );
+  }
+
+  async findOneByLogin(username: string): Promise<Nullable<UserLoginProjection>> {
+    const where: Prisma.UserWhereInput = { deletedAt: null };
+    if (username.includes('@')) where.email = username;
+    else where.username = username;
+
+    const result = await this._prisma.user.findFirst({ where, omit: { deletedAt: true } });
+    if (!result) return null;
+
+    return new UserLoginProjection(
+      result.id,
+      result.names,
+      result.surnames,
+      result.username,
+      result.email,
+      result.confirmed,
+      result.status,
+      result.failedAttempts,
+      result.lockUntil,
+      result.avatar,
     );
   }
 

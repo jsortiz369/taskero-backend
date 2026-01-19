@@ -39,4 +39,14 @@ export const ZodEnvSchema: z.ZodType<Env> = z.object({
       .min(1000, { message: 'DB_PORT must be greater than 1000' })
       .max(65535, { message: 'DB_PORT must be less than 65535' }),
   ),
+  REDIS_HOST: z.string({ error: 'REDIS_HOST must be a string' }).nonempty({ message: 'REDIS_HOST is no empty' }).nonoptional({
+    message: 'REDIS_HOST is required',
+  }),
+  REDIS_PORT: z.preprocess(
+    validateNumber,
+    z
+      .number({ error: 'DB_PORT must be a number' })
+      .min(1000, { message: 'DB_PORT must be greater than 1000' })
+      .max(65535, { message: 'DB_PORT must be less than 65535' }),
+  ),
 });

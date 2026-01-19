@@ -7,4 +7,6 @@ export type Env = {
   DB_USERNAME: string;
   DB_PASSWORD: string;
   DB_PORT: number;
+  REDIS_HOST: string;
+  REDIS_PORT: number;
 };

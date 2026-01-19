@@ -3,3 +3,5 @@ export { UserConflictUsernameService } from './user-conflict-username.service';
 export { UserConflictEmailService } from './user-conflict-email.service';
 export { UserConflictPhoneService } from './user-conflict-phone.service';
 export { UserCreateService } from './user-create.service';
+export { UserUpdateFailedAttemptsByIdService } from './user-update-failed-attempts-by-id.service';
+export { UserLoginService } from './user-login.service';

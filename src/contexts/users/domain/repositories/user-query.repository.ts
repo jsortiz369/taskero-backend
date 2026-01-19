@@ -1,6 +1,7 @@
 import { DataFindAll, Nullable } from 'src/shared/system/domain/system.interface';
 import { UserFindAllProjection, UserFindOneByIdProjection } from '../projections';
 import { UserFindAll } from '../user.interface';
+import { UserLoginProjection } from '../projections/user-login.projection';
 
 export abstract class IUserQueryRepository {
   /**
@@ -24,6 +25,17 @@ export abstract class IUserQueryRepository {
    * @returns {Promise<Nullable<UserFindOneByIdProjection>>}
    */
   abstract findOneById(id: string): Promise<Nullable<UserFindOneByIdProjection>>;
+
+  /**
+   * @description Get User login
+   * @date 2026-01-17 16:46:04
+   * @author Jogan Ortiz Muñoz
+   *
+   * @abstract
+   * @param {string} username
+   * @returns {Promise<Nullable<UserLoginProjection>>}
+   */
+  abstract findOneByLogin(username: string): Promise<Nullable<UserLoginProjection>>;
 
   /**
    * @description Check if username exist

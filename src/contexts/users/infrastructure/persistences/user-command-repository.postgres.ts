@@ -76,6 +76,17 @@ export class UserCommandRepositoryPostgres implements IUserCommandRepository {
     return user;
   }
 
+  async updateLoginAttempts(_id: UserId, attempts: number): Promise<void> {
+    // TODO: Update login attempts and lock if attempts >= 5
+    let lockUntil: null | Date = null;
+    if (attempts >= 5) lockUntil = new Date();
+
+    await this._prisma.user.update({
+      data: { failedAttempts: attempts, lockUntil },
+      where: { id: _id._value, deletedAt: null },
+    });
+  }
+
   /**
    * @description Delete User By Id
    * @date 2025-12-25 21:23:55

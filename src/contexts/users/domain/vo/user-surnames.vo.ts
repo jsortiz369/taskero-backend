@@ -13,7 +13,7 @@ export class UserSurnames extends StringValueObject<UserSurnamesProp> {
    * @param {UserSurnamesProp} value
    */
   constructor(value: UserSurnamesProp) {
-    super(value, 'Los apellidos no son válidos, debe ser cadena de texto.');
+    super(value, 'Los apellidos no son válidos, debe ser cadena de texto.', { capitalize: true });
 
     this.ensureIsDefined('Los apellidos es requerido'); // Not null or undefined
     this.ensureNotEmpty('Los apellidos no deben estar vacíos'); // Not empty string
