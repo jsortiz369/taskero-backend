@@ -1,3 +1,39 @@
+type expiredAt =
+  | 'Years'
+  | 'Year'
+  | 'Yrs'
+  | 'Yr'
+  | 'Y'
+  | 'Weeks'
+  | 'Week'
+  | 'W'
+  | 'Days'
+  | 'Day'
+  | 'D'
+  | 'Hours'
+  | 'Hour'
+  | 'Hrs'
+  | 'Hr'
+  | 'H'
+  | 'Minutes'
+  | 'Minute'
+  | 'Mins'
+  | 'Min'
+  | 'M'
+  | 'Seconds'
+  | 'Second'
+  | 'Secs'
+  | 'Sec'
+  | 's'
+  | 'Milliseconds'
+  | 'Millisecond'
+  | 'Msecs'
+  | 'Msec'
+  | 'Ms';
+
+type UnitAnyCase = expiredAt | Uppercase<expiredAt> | Lowercase<expiredAt>;
+export type EnvJwtExpiresIn = `${number}` | `${number}${UnitAnyCase}` | `${number} ${UnitAnyCase}`;
+
 export type Env = {
   PORT: number;
   NODE_ENV: 'development' | 'production' | 'test';
@@ -9,4 +45,8 @@ export type Env = {
   DB_PORT: number;
   REDIS_HOST: string;
   REDIS_PORT: number;
+  JWT_SECRET: string;
+  JWT_REFRESH_SECRET: string;
+  JWT_EXPIRES_IN: EnvJwtExpiresIn | number;
+  JWT_REFRESH_EXPIRES_IN: EnvJwtExpiresIn | number;
 };
