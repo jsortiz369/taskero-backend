@@ -4,9 +4,11 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
 import { IEmailsRepository } from '../../domain/emails.repository';
 import { DataSendEmail } from '../../domain/emails.interfaces';
+import { IEnvRepository } from 'src/shared/env/domain/env.repository';
 
 export class EmailsRepository implements IEmailsRepository {
   private readonly _transporter: Transporter<SESTransport.SentMessageInfo | SMTPTransport.Options>;
+  private readonly _envRepository: IEnvRepository;
 
   /**
    * Creates an instance of EmailsRepository.
@@ -15,13 +17,14 @@ export class EmailsRepository implements IEmailsRepository {
    *
    * @constructor
    */
-  constructor() {
+  constructor(_envRepository: IEnvRepository) {
+    this._envRepository = _envRepository;
     this._transporter = createTransport({
-      host: 'smtp.mailersend.net',
-      port: 2525,
+      host: _envRepository.get('MSTP_HOST'),
+      port: _envRepository.get('MSTP_PORT'),
       auth: {
-        user: 'MS_TEqUw3@test-68zxl27ekn94j905.mlsender.net',
-        pass: 'mssp.TwjOhiS.jpzkmgqeyn2g059v.gn6rpz6',
+        user: _envRepository.get('MSTP_USER'),
+        pass: _envRepository.get('MSTP_PASSWORD'),
       },
     });
   }
@@ -37,7 +40,7 @@ export class EmailsRepository implements IEmailsRepository {
    */
   async sendEmail(data: DataSendEmail): Promise<string | null> {
     const info = await this._transporter.sendMail({
-      from: 'MS_TEqUw3@test-68zxl27ekn94j905.mlsender.net',
+      from: this._envRepository.get('MSTP_USER'),
       to: data.to,
       subject: data.subject,
       text: data.text,
