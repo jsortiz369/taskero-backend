@@ -26,25 +26,6 @@ export class SendEmailWorker extends WorkerHost {
     });
 
     console.log(result);
-
-    /* const transporter = createTransport({
-      host: 'smtp.mailersend.net',
-      port: 2525,
-      auth: {
-        user: 'MS_TEqUw3@test-68zxl27ekn94j905.mlsender.net',
-        pass: 'mssp.TwjOhiS.jpzkmgqeyn2g059v.gn6rpz6',
-      },
-    });
-
-    template = template.replace(' {{CODE}}', '123456');
-    const info = await transporter.sendMail({
-      from: 'MS_TEqUw3@test-68zxl27ekn94j905.mlsender.net',
-      to: 'jogansmitho@gmail.com',
-      subject: 'Hello ✔',
-      html: template,
-    });
- */
-    //console.log(info.messageId);
     return job.data;
   }
 }
