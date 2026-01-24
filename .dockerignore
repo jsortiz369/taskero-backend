@@ -8,3 +8,4 @@
 !/.env
 !/nest-cli.json
 !/prisma.config.ts
+!/uploads

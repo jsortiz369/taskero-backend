@@ -6,6 +6,7 @@ import { UsersPasswordsModule } from '../user-passwords/users-passwords.module';
 import { UserPasswordByIdUserService } from '../user-passwords/domain/services';
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
+import { ISendEmailBullmqRepository } from 'src/shared/bullmq/domain/repositories/send-email.repository';
 import * as servicesUser from '../users/domain/services';
 import * as controllers from './infrastructure/http/controllers';
 import * as handlers from './application';
@@ -43,13 +44,23 @@ import * as handlers from './application';
         userUpdateFailedAttempts: servicesUser.UserUpdateFailedAttemptsByIdService,
         IBcryptRepository: IBcryptRepository,
         IJwtRepository: IJwtRepository,
-      ) => new handlers.AuthLoginHandler(userLogin, userPassword, userUpdateFailedAttempts, IBcryptRepository, IJwtRepository),
+        ISendEmailBullmqRepository: ISendEmailBullmqRepository,
+      ) =>
+        new handlers.AuthLoginHandler(
+          userLogin,
+          userPassword,
+          userUpdateFailedAttempts,
+          IBcryptRepository,
+          IJwtRepository,
+          ISendEmailBullmqRepository,
+        ),
       inject: [
         servicesUser.UserLoginService,
         UserPasswordByIdUserService,
         servicesUser.UserUpdateFailedAttemptsByIdService,
         IBcryptRepository,
         IJwtRepository,
+        ISendEmailBullmqRepository,
       ],
     },
   ],

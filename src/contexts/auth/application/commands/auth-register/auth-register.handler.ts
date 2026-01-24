@@ -1,10 +1,6 @@
-import { InjectQueue } from '@nestjs/bullmq';
-import { Queue } from 'bullmq';
-
 import { UserCreateService } from 'src/contexts/users/domain/services';
 import { AuthRegisterCommand } from './auth-register.command';
 import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
-import { QUEUE } from 'src/shared/system/domain/constants/queue.constant';
 
 export class AuthRegisterHandler {
   /**
@@ -19,7 +15,6 @@ export class AuthRegisterHandler {
   constructor(
     private readonly _userCreate: UserCreateService,
     private readonly _jwtRepository: IJwtRepository,
-    @InjectQueue(QUEUE.EMAILS) private readonly _emailQueue: Queue,
   ) {}
 
   async execute(command: AuthRegisterCommand): Promise<{ tokenConfirm: string }> {
