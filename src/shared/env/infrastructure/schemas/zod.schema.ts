@@ -50,6 +50,12 @@ export const ZodEnvSchema: z.ZodType<Env> = z.object({
   JWT_REFRESH_SECRET: z.string({ error: 'JWT_REFRESH_SECRET must be a string' }).nonempty({ message: 'JWT_REFRESH_SECRET is no empty' }).nonoptional({
     message: 'JWT_REFRESH_SECRET is required',
   }),
+  JWT_CONFIRM_ACCOUNT: z
+    .string({ error: 'JWT_CONFIRM_ACCOUNT must be a string' })
+    .nonempty({ message: 'JWT_CONFIRM_ACCOUNT is no empty' })
+    .nonoptional({
+      message: 'JWT_CONFIRM_ACCOUNT is required',
+    }),
   JWT_EXPIRES_IN: z
     .union([jwtExpiration, z.number({ error: 'JWT_EXPIRES_IN must be a number' })], {
       error: 'JWT_EXPIRES_IN must be a string or a number',

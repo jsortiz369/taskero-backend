@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 
 import { BcryptModule } from 'src/shared/bcrypt/bcrypt.module';
 import { UsersModule } from '../users/users.module';
-import { JwtModule } from 'src/shared/jwt/jwt.module';
 import { UsersPasswordsModule } from '../user-passwords/users-passwords.module';
 import { UserPasswordByIdUserService } from '../user-passwords/domain/services';
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
@@ -12,7 +11,7 @@ import * as controllers from './infrastructure/http/controllers';
 import * as handlers from './application';
 
 @Module({
-  imports: [BcryptModule, JwtModule, UsersModule, UsersPasswordsModule],
+  imports: [BcryptModule, UsersModule, UsersPasswordsModule],
   controllers: [controllers.AuthController],
   providers: [
     {
@@ -32,8 +31,9 @@ import * as handlers from './application';
     },
     {
       provide: handlers.AuthRegisterHandler,
-      useFactory: (userCreate: servicesUser.UserCreateService) => new handlers.AuthRegisterHandler(userCreate),
-      inject: [servicesUser.UserCreateService],
+      useFactory: (userCreate: servicesUser.UserCreateService, IJwtRepository: IJwtRepository) =>
+        new handlers.AuthRegisterHandler(userCreate, IJwtRepository),
+      inject: [servicesUser.UserCreateService, IJwtRepository],
     },
     {
       provide: handlers.AuthLoginHandler,

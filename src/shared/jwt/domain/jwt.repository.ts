@@ -24,6 +24,17 @@ export abstract class IJwtRepository {
   abstract generateRefresh<T extends object = any>(payload: T): string;
 
   /**
+   * @description Generate jwt temp for confirm account
+   * @date 2026-01-23 15:16:18
+   * @author Jogan Ortiz Muñoz
+   *
+   * @abstract
+   * @param {{ sub: string }} payload
+   * @returns {string}
+   */
+  abstract generateConfirmAccount(payload: { sub: string }): string;
+
+  /**
    * @description verify jwt
    * @date 2026-01-23 08:37:03
    * @author Jogan Ortiz Muñoz
@@ -46,4 +57,15 @@ export abstract class IJwtRepository {
    * @returns {T}
    */
   abstract verifyRefresh<T extends object = any>(token: string): T;
+
+  /**
+   * @description Verify jwt temp for confirm account
+   * @date 2026-01-23 15:17:16
+   * @author Jogan Ortiz Muñoz
+   *
+   * @abstract
+   * @param {string} token
+   * @returns {{ sub: string }}
+   */
+  abstract verifyConfirmAccount(token: string): { sub: string };
 }

@@ -79,7 +79,10 @@ export class UserCommandRepositoryPostgres implements IUserCommandRepository {
   async updateLoginAttempts(_id: UserId, attempts: number): Promise<void> {
     // TODO: Update login attempts and lock if attempts >= 5
     let lockUntil: null | Date = null;
-    if (attempts >= 5) lockUntil = new Date();
+    if (attempts >= 5) {
+      lockUntil = new Date();
+      lockUntil.setMinutes(lockUntil.getMinutes() + 15);
+    }
 
     await this._prisma.user.update({
       data: { failedAttempts: attempts, lockUntil },

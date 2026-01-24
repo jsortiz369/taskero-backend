@@ -47,6 +47,7 @@ export type Env = {
   REDIS_PORT: number;
   JWT_SECRET: string;
   JWT_REFRESH_SECRET: string;
+  JWT_CONFIRM_ACCOUNT: string;
   JWT_EXPIRES_IN: EnvJwtExpiresIn | number;
   JWT_REFRESH_EXPIRES_IN: EnvJwtExpiresIn | number;
 };

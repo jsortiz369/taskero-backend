@@ -4,6 +4,7 @@ import { UserPasswordByIdUserService } from 'src/contexts/user-passwords/domain/
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
 import * as E from 'src/contexts/auth/domain/exceptions';
+import { ISendEmailBullmqRepository } from 'src/shared/bullmq/domain/repositories/send-email.repository';
 
 export class AuthLoginHandler {
   /**
@@ -24,6 +25,7 @@ export class AuthLoginHandler {
     private readonly _userUpdateFailedAttemptsService: UserUpdateFailedAttemptsByIdService,
     private readonly _bycryptRepository: IBcryptRepository,
     private readonly _jwtRepository: IJwtRepository,
+    private readonly _sendEmailQueue: ISendEmailBullmqRepository,
   ) {}
 
   async execute(command: AuthLoginCommand) {
@@ -36,31 +38,33 @@ export class AuthLoginHandler {
     let lockUntil: null | Date = user.lockUntil ? user.lockUntil : null;
 
     // TODO: reset failed attempts
-    if (failedAttempts >= 5 && this.validateIsLockUser(lockUntil)) {
+    if (lockUntil && failedAttempts >= 5 && lockUntil < new Date()) {
       failedAttempts = 1;
       lockUntil = null;
     }
 
+    const userPassword = await this._userPasswordByIdUserService.execute(user._id);
+    const isValidPassword = await this._bycryptRepository.compare(command.password, userPassword?.password ?? '');
+    if (!isValidPassword) {
+      if (!lockUntil) await this._userUpdateFailedAttemptsService.execute(user._id, failedAttempts);
+      if (failedAttempts == 4) throw new E.UserInfoLockException();
+      else throw new E.UserOrPasswordNotCorrectException();
+    }
+
     // TODO: validate user lock
     if (lockUntil) throw new E.UserLockException();
-
-    // TODO: get password user by id
-    if (lockUntil == null || failedAttempts <= 5) {
-      const userPassword = await this._userPasswordByIdUserService.execute(user._id);
-      const isValidPassword = await this._bycryptRepository.compare(command.password, userPassword?.password ?? '');
-      if (!isValidPassword) {
-        await this._userUpdateFailedAttemptsService.execute(user._id, failedAttempts);
-        if (failedAttempts == 4) throw new E.UserInfoLockException();
-        else if (failedAttempts >= 5) throw new E.UserLockException();
-        else throw new E.UserOrPasswordNotCorrectException();
-      }
-    }
 
     // TODO: update failed attempts
     await this._userUpdateFailedAttemptsService.execute(user._id, 0);
 
     // TODO: validate user inactive
     if (!user.status) throw new E.UserInactiveException();
+
+    // TODO: validate user confirmed
+    if (!user.confirmed) {
+      await this._sendEmailQueue.addJob({ email: user.email });
+      return { tokenConfirm: this._jwtRepository.generateConfirmAccount({ sub: user._id }) };
+    }
 
     const payload = { username: user.username, sub: user._id };
     const token = this._jwtRepository.generate(payload);
@@ -77,16 +81,5 @@ export class AuthLoginHandler {
         confirmed: user.confirmed,
       },
     };
-  }
-
-  private validateIsLockUser(date: Date | null): boolean {
-    if (!date) return false;
-
-    const curreentDate = new Date();
-    curreentDate.setHours(0, 0, 0, 0);
-    const dateLock = new Date(date);
-    dateLock.setHours(0, 0, 0, 0);
-
-    return dateLock < curreentDate;
   }
 }

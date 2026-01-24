@@ -45,6 +45,18 @@ export class JwtRepository implements IJwtRepository {
   }
 
   /**
+   * @description Generate jwt temp for confirm account
+   * @date 2026-01-23 15:20:30
+   * @author Jogan Ortiz Muñoz
+   *
+   * @param {{ sub: string }} payload
+   * @returns {string}
+   */
+  generateConfirmAccount(payload: { sub: string }): string {
+    return this._jwtService.sign(payload, { secret: this._env.get('JWT_CONFIRM_ACCOUNT'), expiresIn: '5m' });
+  }
+
+  /**
    * @description verify jwt
    * @date 2026-01-23 08:37:58
    * @author Jogan Ortiz Muñoz
@@ -68,5 +80,17 @@ export class JwtRepository implements IJwtRepository {
    */
   verifyRefresh<T extends object = any>(token: string): T {
     return this._jwtService.verify<T>(token, { secret: this._env.get('JWT_REFRESH_SECRET') });
+  }
+
+  /**
+   * @description Verify jwt temp for confirm account
+   * @date 2026-01-23 15:20:06
+   * @author Jogan Ortiz Muñoz
+   *
+   * @param {string} token
+   * @returns {{ sub: string }}
+   */
+  verifyConfirmAccount(token: string): { sub: string } {
+    return this._jwtService.verify<{ sub: string }>(token, { secret: this._env.get('JWT_CONFIRM_ACCOUNT') });
   }
 }

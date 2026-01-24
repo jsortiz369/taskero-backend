@@ -1,5 +1,10 @@
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
+
 import { UserCreateService } from 'src/contexts/users/domain/services';
 import { AuthRegisterCommand } from './auth-register.command';
+import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
+import { QUEUE } from 'src/shared/system/domain/constants/queue.constant';
 
 export class AuthRegisterHandler {
   /**
@@ -9,17 +14,20 @@ export class AuthRegisterHandler {
    *
    * @constructor
    * @param {UserCreateService} _userCreate
+   * @param {IJwtRepository} _jwtRepository
    */
-  constructor(private readonly _userCreate: UserCreateService) {}
+  constructor(
+    private readonly _userCreate: UserCreateService,
+    private readonly _jwtRepository: IJwtRepository,
+    @InjectQueue(QUEUE.EMAILS) private readonly _emailQueue: Queue,
+  ) {}
 
-  async execute(command: AuthRegisterCommand) {
+  async execute(command: AuthRegisterCommand): Promise<{ tokenConfirm: string }> {
     // TODO: create user
     const result = await this._userCreate.execute(command);
     const userPrimitive = result.toValuesPrimitives();
 
-    return {
-      username: userPrimitive.username,
-      email: userPrimitive.email,
-    };
+    // TODO: create token confirmed account
+    return { tokenConfirm: this._jwtRepository.generateConfirmAccount({ sub: userPrimitive._id }) };
   }
 }

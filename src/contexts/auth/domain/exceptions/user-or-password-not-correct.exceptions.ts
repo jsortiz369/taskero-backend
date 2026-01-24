@@ -9,6 +9,6 @@ export class UserOrPasswordNotCorrectException extends UnauthorizedException {
    * @constructor
    */
   constructor() {
-    super('Usuario y/o contraseña incorrectos.');
+    super('Usuario y/o contraseña incorrecto.');
   }
 }
