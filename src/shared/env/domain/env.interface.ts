@@ -50,4 +50,8 @@ export type Env = {
   JWT_CONFIRM_ACCOUNT: string;
   JWT_EXPIRES_IN: EnvJwtExpiresIn | number;
   JWT_REFRESH_EXPIRES_IN: EnvJwtExpiresIn | number;
+  SMTP_HOST: string;
+  SMTP_PORT: number;
+  SMTP_USERNAME: string;
+  SMTP_PASSWORD: string;
 };

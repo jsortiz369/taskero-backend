@@ -76,4 +76,20 @@ export const ZodEnvSchema: z.ZodType<Env> = z.object({
       .min(1000, { message: 'DB_PORT must be greater than 1000' })
       .max(65535, { message: 'DB_PORT must be less than 65535' }),
   ),
+  SMTP_HOST: z.string({ error: 'SMTP_HOST must be a string' }).nonempty({ message: 'SMTP_HOST is no empty' }).nonoptional({
+    message: 'SMTP_HOST is required',
+  }),
+  SMTP_PORT: z.preprocess(
+    validateNumber,
+    z
+      .number({ error: 'SMTP_PORT must be a number' })
+      .min(1000, { message: 'SMTP_PORT must be greater than 1000' })
+      .max(65535, { message: 'SMTP_PORT must be less than 65535' }),
+  ),
+  SMTP_USERNAME: z.string({ error: 'SMTP_USERNAME must be a string' }).nonempty({ message: 'SMTP_USERNAME is no empty' }).nonoptional({
+    message: 'SMTP_USERNAME is required',
+  }),
+  SMTP_PASSWORD: z.string({ error: 'SMTP_PASSWORD must be a string' }).nonempty({ message: 'SMTP_PASSWORD is no empty' }).nonoptional({
+    message: 'SMTP_PASSWORD is required',
+  }),
 });

@@ -1,3 +1,4 @@
-export type sendEmail = {
+export type BullmqSendEmail = {
   email: string;
+  code: string;
 };

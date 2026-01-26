@@ -1,20 +1,18 @@
 import { Module } from '@nestjs/common';
 
-import { UsersPasswordsModule } from '../user-passwords/users-passwords.module';
+import { UsersPasswordsModule } from '../users-passwords/users-passwords.module';
 import { UuidModule } from 'src/shared/uuid/uuid.module';
-import { BcryptModule } from 'src/shared/bcrypt/bcrypt.module';
 import { IUserQueryRepository, IUserCommandRepository } from './domain/repositories';
 import { UserQueryRepositoryPostgres, UserCommandRepositoryPostgres } from './infrastructure/persistences';
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
 import { IUuidRepository } from 'src/shared/uuid/domain/uuid.repository';
-import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
-import { UserPasswordCreateService } from '../user-passwords/domain/services';
+import { UserPasswordCreateService } from '../users-passwords/domain/services';
 import * as services from './domain/services';
 import * as controllers from './infrastructure/http/controllers';
 import * as handlers from './application';
 
 @Module({
-  imports: [UuidModule, BcryptModule, UsersPasswordsModule],
+  imports: [UuidModule, UsersPasswordsModule],
   controllers: [controllers.UserController],
   providers: [
     {
@@ -54,18 +52,16 @@ import * as handlers from './application';
         conflictUsername: services.UserConflictUsernameService,
         conflictEmail: services.UserConflictEmailService,
         conflictPhone: services.UserConflictPhoneService,
-        bcrypt: IBcryptRepository,
         userCommand: IUserCommandRepository,
         userPasswordCreateService: UserPasswordCreateService,
       ) => {
-        return new services.UserCreateService(uuid, conflictUsername, conflictEmail, conflictPhone, bcrypt, userCommand, userPasswordCreateService);
+        return new services.UserCreateService(uuid, conflictUsername, conflictEmail, conflictPhone, userCommand, userPasswordCreateService);
       },
       inject: [
         IUuidRepository,
         services.UserConflictUsernameService,
         services.UserConflictEmailService,
         services.UserConflictPhoneService,
-        IBcryptRepository,
         IUserCommandRepository,
         UserPasswordCreateService,
       ],

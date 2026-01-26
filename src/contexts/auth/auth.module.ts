@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 
 import { BcryptModule } from 'src/shared/bcrypt/bcrypt.module';
 import { UsersModule } from '../users/users.module';
-import { UsersPasswordsModule } from '../user-passwords/users-passwords.module';
-import { UserPasswordByIdUserService } from '../user-passwords/domain/services';
+import { UsersPasswordsModule } from '../users-passwords/users-passwords.module';
+import { UserPasswordByIdUserService } from '../users-passwords/domain/services';
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
 import { ISendEmailBullmqRepository } from 'src/shared/bullmq/domain/repositories/send-email.repository';

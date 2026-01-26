@@ -1,8 +1,20 @@
 import { UserId } from 'src/contexts/users/domain/vo';
-import * as vo from './vo';
 import { UserPasswordCreatePrimitive, UserPasswordPrimitive } from './user-password.interface';
+import * as vo from './vo';
 
 export class UserPassword {
+  /**
+   * Creates an instance of UserPassword.
+   * @date 2026-01-26 06:38:52
+   * @author Jogan Ortiz Muñoz
+   *
+   * @constructor
+   * @param {vo.UserPasswordId} _idVO
+   * @param {UserId} userIdVO
+   * @param {vo.UserPasswordPassword} passwordVO
+   * @param {boolean} isCurrent
+   * @param {Date} createdAt
+   */
   constructor(
     private readonly _idVO: vo.UserPasswordId,
     private userIdVO: UserId,

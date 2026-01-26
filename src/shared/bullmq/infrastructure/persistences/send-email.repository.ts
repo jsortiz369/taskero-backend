@@ -1,7 +1,7 @@
 import { InjectQueue } from '@nestjs/bullmq';
 import { Job, Queue } from 'bullmq';
 
-import { sendEmail } from '../../domain/interfaces/send-email.interface';
+import { BullmqSendEmail } from '../../domain/interfaces/send-email.interface';
 import { QUEUE } from 'src/shared/system/domain/constants/queue.constant';
 import { ISendEmailBullmqRepository } from '../../domain/repositories/send-email.repository';
 
@@ -22,10 +22,10 @@ export class SendEmailRepository implements ISendEmailBullmqRepository {
    * @author Jogan Ortiz Muñoz
    *
    * @async
-   * @param {sendEmail} data
+   * @param {BullmqSendEmail} data
    * @returns {Promise<Job<any, any, string>>}
    */
-  async addJob(data: sendEmail): Promise<Job<any, any, string>> {
+  async addJob(data: BullmqSendEmail): Promise<Job<any, any, string>> {
     return this.queue.add('send-email', data);
   }
 }

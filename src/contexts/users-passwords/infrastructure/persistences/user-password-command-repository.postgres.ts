@@ -1,6 +1,7 @@
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
 import { IUserPasswordCommandRepository } from '../../domain/repositories/user-password-command.repository';
 import { UserPassword } from '../../domain/user-password';
+import { UserId } from 'src/contexts/users/domain/vo';
 
 export class UserPasswordCommandRepositoryPostgres implements IUserPasswordCommandRepository {
   /**
@@ -13,6 +14,15 @@ export class UserPasswordCommandRepositoryPostgres implements IUserPasswordComma
    */
   constructor(private readonly _prisma: PrismaRepository) {}
 
+  /**
+   * @description Create new password by user
+   * @date 2026-01-26 06:45:34
+   * @author Jogan Ortiz Muñoz
+   *
+   * @async
+   * @param {UserPassword} userPassword
+   * @returns {Promise<UserPassword>}
+   */
   async create(userPassword: UserPassword): Promise<UserPassword> {
     await this._prisma.userPasswords.create({
       data: {
@@ -24,6 +34,13 @@ export class UserPasswordCommandRepositoryPostgres implements IUserPasswordComma
       },
     });
 
-    return Promise.resolve(userPassword);
+    return userPassword;
+  }
+
+  async disableCreatedPasswordsByUserId(userId: UserId): Promise<void> {
+    await this._prisma.userPasswords.update({
+      where: { userId: userId._value, isCurrent: true },
+      data: { isCurrent: false },
+    });
   }
 }

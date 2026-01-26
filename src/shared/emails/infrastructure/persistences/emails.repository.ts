@@ -19,12 +19,13 @@ export class EmailsRepository implements IEmailsRepository {
    */
   constructor(_envRepository: IEnvRepository) {
     this._envRepository = _envRepository;
+
     this._transporter = createTransport({
-      host: _envRepository.get('MSTP_HOST'),
-      port: _envRepository.get('MSTP_PORT'),
+      host: _envRepository.get('SMTP_HOST'),
+      port: _envRepository.get('SMTP_PORT'),
       auth: {
-        user: _envRepository.get('MSTP_USER'),
-        pass: _envRepository.get('MSTP_PASSWORD'),
+        user: _envRepository.get('SMTP_USERNAME'),
+        pass: _envRepository.get('SMTP_PASSWORD'),
       },
     });
   }
@@ -39,8 +40,11 @@ export class EmailsRepository implements IEmailsRepository {
    * @returns {Promise<string|null>}
    */
   async sendEmail(data: DataSendEmail): Promise<string | null> {
+    let from = this._envRepository.get('SMTP_USERNAME');
+    if (data.titleFrom) from = `${data.titleFrom} <${from}>`;
+
     const info = await this._transporter.sendMail({
-      from: this._envRepository.get('MSTP_USER'),
+      from,
       to: data.to,
       subject: data.subject,
       text: data.text,

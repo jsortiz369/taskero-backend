@@ -12,9 +12,9 @@ export class UserPasswordPassword extends StringValueObject<UserPasswordPassword
    * @param {UserPasswordPasswordProp} value
    */
   constructor(value: UserPasswordPasswordProp) {
-    super(value, 'The password is not valid must be a string');
+    super(value, 'El valor de la contraseña no es válido'); // Generic string validation
 
-    this.ensureIsDefined('The password is required'); // Not null or undefined
-    this.ensureNotEmpty('The password is not empty'); // Not empty string
+    this.ensureIsDefined('La contraseña es requerida'); // Not null or undefined
+    this.ensureNotEmpty('La contraseña no está vacía'); // Not empty string
   }
 }

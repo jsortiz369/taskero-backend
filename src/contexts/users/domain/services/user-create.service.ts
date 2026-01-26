@@ -1,13 +1,11 @@
 import { IUuidRepository } from 'src/shared/uuid/domain/uuid.repository';
+import { UserPasswordCreateService } from 'src/contexts/users-passwords/domain/services';
 import { UserCreateCommand } from '../../application/commands/user-create';
-import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 import { IUserCommandRepository } from '../repositories';
-import { UserPasswordCreateService } from 'src/contexts/user-passwords/domain/services';
-import { User } from '../user';
 import { UserConflictEmailService } from './user-conflict-email.service';
 import { UserConflictPhoneService } from './user-conflict-phone.service';
-import { UserPassword } from 'src/contexts/user-passwords/domain/user-password';
 import { UserConflictUsernameService } from './user-conflict-username.service';
+import { User } from '../user';
 
 export class UserCreateService {
   /**
@@ -20,7 +18,6 @@ export class UserCreateService {
    * @param {UserConflictUsernameService} _conflictUsername
    * @param {UserConflictEmailService} _conflictEmail
    * @param {UserConflictPhoneService} _conflictPhone
-   * @param {IBcryptRepository} _bcryptRepository
    * @param {IUserCommandRepository} _commandRepository
    * @param {UserPasswordCreateService} _userPasswordCreateService
    */
@@ -29,7 +26,6 @@ export class UserCreateService {
     private readonly _conflictUsername: UserConflictUsernameService,
     private readonly _conflictEmail: UserConflictEmailService,
     private readonly _conflictPhone: UserConflictPhoneService,
-    private readonly _bcryptRepository: IBcryptRepository,
     private readonly _commandRepository: IUserCommandRepository,
     private readonly _passwordCreate: UserPasswordCreateService,
   ) {}
@@ -60,14 +56,7 @@ export class UserCreateService {
     const createUser = await this._commandRepository.create(userEntity);
 
     // TODO: Create User Password
-    await this._passwordCreate.execute(
-      UserPassword.create({
-        _id: this._uuidRepository.generateUuid(),
-        userId: createUser._id._value,
-        password: await this._bcryptRepository.hash(command.password),
-        isCurrent: true,
-      }),
-    );
+    await this._passwordCreate.execute(createUser._id._value, command.password);
 
     return createUser;
   }

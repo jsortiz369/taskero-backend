@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 
+import { UuidModule } from 'src/shared/uuid/uuid.module';
+import { BcryptModule } from 'src/shared/bcrypt/bcrypt.module';
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
 import { UserPasswordCommandRepositoryPostgres, UserPasswordQueryRepositoryPostgres } from './infrastructure/persistences';
 import { IUserPasswordCommandRepository, IUserPasswordQueryRepository } from './domain/repositories';
+import { IUuidRepository } from 'src/shared/uuid/domain/uuid.repository';
+import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 import * as services from './domain/services';
 
-/* 
-import * as controllers from './infrastructure/http/controllers';
-import * as handlers from './application'; */
-
 @Module({
-  imports: [],
+  imports: [UuidModule, BcryptModule],
   controllers: [],
   providers: [
     {
@@ -25,8 +25,9 @@ import * as handlers from './application'; */
     },
     {
       provide: services.UserPasswordCreateService,
-      useFactory: (userCommand: IUserPasswordCommandRepository) => new services.UserPasswordCreateService(userCommand),
-      inject: [IUserPasswordCommandRepository],
+      useFactory: (uuid: IUuidRepository, bcrypt: IBcryptRepository, userCommand: IUserPasswordCommandRepository) =>
+        new services.UserPasswordCreateService(uuid, bcrypt, userCommand),
+      inject: [IUuidRepository, IBcryptRepository, IUserPasswordCommandRepository],
     },
     {
       provide: services.UserPasswordByIdUserService,

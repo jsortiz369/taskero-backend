@@ -1,10 +1,12 @@
+import { randomInt } from 'node:crypto';
+
 import { UserLoginService, UserUpdateFailedAttemptsByIdService } from 'src/contexts/users/domain/services';
 import { AuthLoginCommand } from './auth-login.command';
-import { UserPasswordByIdUserService } from 'src/contexts/user-passwords/domain/services';
+import { UserPasswordByIdUserService } from 'src/contexts/users-passwords/domain/services';
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
-import * as E from 'src/contexts/auth/domain/exceptions';
 import { ISendEmailBullmqRepository } from 'src/shared/bullmq/domain/repositories/send-email.repository';
+import * as E from 'src/contexts/auth/domain/exceptions';
 
 export class AuthLoginHandler {
   /**
@@ -62,7 +64,8 @@ export class AuthLoginHandler {
 
     // TODO: validate user confirmed
     if (!user.confirmed) {
-      await this._sendEmailQueue.addJob({ email: user.email });
+      const code = randomInt(0, 999999).toString().padStart(6, '0');
+      await this._sendEmailQueue.addJob({ email: user.email, code: code });
       return { tokenConfirm: this._jwtRepository.generateConfirmAccount({ sub: user._id }) };
     }
 
