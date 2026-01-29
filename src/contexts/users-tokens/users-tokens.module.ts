@@ -6,9 +6,11 @@ import { UserTokenCommandRepositoryPostgres } from './infrastructure/persistence
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
 import { IUuidRepository } from 'src/shared/uuid/domain/uuid.repository';
 import * as services from './domain/services';
+import { BcryptModule } from 'src/shared/bcrypt/bcrypt.module';
+import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 
 @Module({
-  imports: [UuidModule],
+  imports: [UuidModule, BcryptModule],
   providers: [
     {
       provide: UserTokenCommandRepository,
@@ -17,8 +19,9 @@ import * as services from './domain/services';
     },
     {
       provide: services.UserTokenCreateService,
-      useFactory: (uuid: IUuidRepository) => new services.UserTokenCreateService(uuid),
-      inject: [IUuidRepository],
+      useFactory: (uuid: IUuidRepository, bcrypt: IBcryptRepository, userCommand: UserTokenCommandRepository) =>
+        new services.UserTokenCreateService(uuid, bcrypt, userCommand),
+      inject: [IUuidRepository, IBcryptRepository, UserTokenCommandRepository],
     },
   ],
   exports: [services.UserTokenCreateService],

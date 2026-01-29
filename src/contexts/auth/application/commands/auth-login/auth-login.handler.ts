@@ -1,11 +1,10 @@
-import { randomInt } from 'node:crypto';
-
 import { UserLoginService, UserUpdateFailedAttemptsByIdService } from 'src/contexts/users/domain/services';
 import { AuthLoginCommand } from './auth-login.command';
 import { UserPasswordByIdUserService } from 'src/contexts/users-passwords/domain/services';
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
 import { ISendEmailBullmqRepository } from 'src/shared/bullmq/domain/repositories/send-email.repository';
+import { UserTokenCreateService } from 'src/contexts/users-tokens/domain/services';
 import * as E from 'src/contexts/auth/domain/exceptions';
 
 export class AuthLoginHandler {
@@ -19,6 +18,7 @@ export class AuthLoginHandler {
    * @param {UserPasswordByIdUserService} _userPasswordByIdUserService
    * @param {UserUpdateFailedAttemptsByIdService} _userUpdateFailedAttemptsService
    * @param {IBcryptRepository} _bycryptRepository
+   * @param {UserTokenCreateService} _userTokenCreateService
    * @param {IJwtRepository} _jwtRepository
    */
   constructor(
@@ -27,6 +27,7 @@ export class AuthLoginHandler {
     private readonly _userUpdateFailedAttemptsService: UserUpdateFailedAttemptsByIdService,
     private readonly _bycryptRepository: IBcryptRepository,
     private readonly _jwtRepository: IJwtRepository,
+    private readonly _userTokenCreateService: UserTokenCreateService,
     private readonly _sendEmailQueue: ISendEmailBullmqRepository,
   ) {}
 
@@ -64,8 +65,8 @@ export class AuthLoginHandler {
 
     // TODO: validate user confirmed
     if (!user.confirmed) {
-      const code = randomInt(0, 999999).toString().padStart(6, '0');
-      await this._sendEmailQueue.addJob({ email: user.email, code: code });
+      const token = await this._userTokenCreateService.execute(user._id);
+      await this._sendEmailQueue.addJob({ email: user.email, code: token });
       return { tokenConfirm: this._jwtRepository.generateConfirmAccount({ sub: user._id }) };
     }
 

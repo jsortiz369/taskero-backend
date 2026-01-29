@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { BcryptModule } from 'src/shared/bcrypt/bcrypt.module';
 import { UsersModule } from '../users/users.module';
 import { UsersPasswordsModule } from '../users-passwords/users-passwords.module';
+import { UsersTokensModule } from '../users-tokens/users-tokens.module';
 import { UserPasswordByIdUserService } from '../users-passwords/domain/services';
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
@@ -10,9 +11,10 @@ import { ISendEmailBullmqRepository } from 'src/shared/bullmq/domain/repositorie
 import * as servicesUser from '../users/domain/services';
 import * as controllers from './infrastructure/http/controllers';
 import * as handlers from './application';
+import { UserTokenCreateService } from '../users-tokens/domain/services';
 
 @Module({
-  imports: [BcryptModule, UsersModule, UsersPasswordsModule],
+  imports: [BcryptModule, UsersModule, UsersPasswordsModule, UsersTokensModule],
   controllers: [controllers.AuthController],
   providers: [
     {
@@ -44,6 +46,7 @@ import * as handlers from './application';
         userUpdateFailedAttempts: servicesUser.UserUpdateFailedAttemptsByIdService,
         IBcryptRepository: IBcryptRepository,
         IJwtRepository: IJwtRepository,
+        UserTokenCreateService: UserTokenCreateService,
         ISendEmailBullmqRepository: ISendEmailBullmqRepository,
       ) =>
         new handlers.AuthLoginHandler(
@@ -52,6 +55,7 @@ import * as handlers from './application';
           userUpdateFailedAttempts,
           IBcryptRepository,
           IJwtRepository,
+          UserTokenCreateService,
           ISendEmailBullmqRepository,
         ),
       inject: [
@@ -60,6 +64,7 @@ import * as handlers from './application';
         servicesUser.UserUpdateFailedAttemptsByIdService,
         IBcryptRepository,
         IJwtRepository,
+        UserTokenCreateService,
         ISendEmailBullmqRepository,
       ],
     },
