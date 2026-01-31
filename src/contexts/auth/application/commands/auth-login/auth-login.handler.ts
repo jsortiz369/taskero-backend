@@ -66,7 +66,8 @@ export class AuthLoginHandler {
     // TODO: validate user confirmed
     if (!user.confirmed) {
       const token = await this._userTokenCreateService.execute(user._id);
-      await this._sendEmailQueue.addJob({ email: user.email, code: token });
+      console.log('Confirmation token:', token);
+      //await this._sendEmailQueue.addJob({ email: user.email, code: token });
       return { tokenConfirm: this._jwtRepository.generateConfirmAccount({ sub: user._id }) };
     }
 

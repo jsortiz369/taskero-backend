@@ -53,7 +53,7 @@ export class JwtRepository implements IJwtRepository {
    * @returns {string}
    */
   generateConfirmAccount(payload: { sub: string }): string {
-    return this._jwtService.sign(payload, { secret: this._env.get('JWT_CONFIRM_ACCOUNT'), expiresIn: '5m' });
+    return this._jwtService.sign(payload, { secret: this._env.get('JWT_CONFIRM_ACCOUNT'), expiresIn: '1h' });
   }
 
   /**

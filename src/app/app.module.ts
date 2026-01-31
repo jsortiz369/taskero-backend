@@ -10,6 +10,6 @@ import { BullMqModule } from 'src/shared/bullmq/bullmq.module';
 import { EmailsModule } from 'src/shared/emails/emails.module';
 
 @Module({
-  imports: [SystemModule, EnvModule, JwtModule, EmailsModule, BullMqModule, DatabaseModule, HttpModule, ContextsModule],
+  imports: [EnvModule, JwtModule, SystemModule, EmailsModule, BullMqModule, DatabaseModule, HttpModule, ContextsModule],
 })
 export class AppModule {}

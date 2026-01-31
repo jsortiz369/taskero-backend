@@ -8,10 +8,10 @@ import { UserPasswordByIdUserService } from '../users-passwords/domain/services'
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
 import { ISendEmailBullmqRepository } from 'src/shared/bullmq/domain/repositories/send-email.repository';
+import { UserTokenCompareService, UserTokenCreateService } from '../users-tokens/domain/services';
 import * as servicesUser from '../users/domain/services';
 import * as controllers from './infrastructure/http/controllers';
 import * as handlers from './application';
-import { UserTokenCreateService } from '../users-tokens/domain/services';
 
 @Module({
   imports: [BcryptModule, UsersModule, UsersPasswordsModule, UsersTokensModule],
@@ -67,6 +67,12 @@ import { UserTokenCreateService } from '../users-tokens/domain/services';
         UserTokenCreateService,
         ISendEmailBullmqRepository,
       ],
+    },
+    {
+      provide: handlers.AuthConfirmHandler,
+      useFactory: (userById: servicesUser.UserQueryFindOneByIdService, userTokenCompare: UserTokenCompareService) =>
+        new handlers.AuthConfirmHandler(userById, userTokenCompare),
+      inject: [servicesUser.UserQueryFindOneByIdService, UserTokenCompareService],
     },
   ],
 })
