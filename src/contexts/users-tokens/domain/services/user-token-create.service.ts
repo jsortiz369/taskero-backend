@@ -2,7 +2,7 @@ import { IUuidRepository } from 'src/shared/uuid/domain/uuid.repository';
 import { UserToken } from '../user-token';
 import { UserId } from 'src/contexts/users/domain/vo';
 import { UserTokenId } from '../vo';
-import { UserTokenCommandRepository } from '../repositories/user-token-command.repository';
+import { IUserTokenCommandRepository } from '../repositories';
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 
 export class UserTokenCreateService {
@@ -14,12 +14,12 @@ export class UserTokenCreateService {
    * @constructor
    * @param {IUuidRepository} _uuidRepository
    * @param {IBcryptRepository} _bcryptRepository
-   * @param {UserTokenCommandRepository} _userTokenCommandRepository
+   * @param {IUserTokenCommandRepository} _userTokenCommandRepository
    */
   constructor(
     private readonly _uuidRepository: IUuidRepository,
     private readonly _bcryptRepository: IBcryptRepository,
-    private readonly _userTokenCommandRepository: UserTokenCommandRepository,
+    private readonly _userTokenCommandRepository: IUserTokenCommandRepository,
   ) {}
 
   async execute(idUser: string): Promise<string> {

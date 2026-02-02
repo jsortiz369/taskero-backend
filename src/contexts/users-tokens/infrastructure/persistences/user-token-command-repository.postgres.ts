@@ -1,8 +1,8 @@
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
-import { UserTokenCommandRepository } from '../../domain/repositories/user-token-command.repository';
 import { UserToken } from '../../domain/user-token';
+import { IUserTokenCommandRepository } from '../../domain/repositories';
 
-export class UserTokenCommandRepositoryPostgres implements UserTokenCommandRepository {
+export class UserTokenCommandRepositoryPostgres implements IUserTokenCommandRepository {
   /**
    * Creates an instance of UserTokenCommandRepositoryPostgres.
    * @date 2026-01-26 06:43:49

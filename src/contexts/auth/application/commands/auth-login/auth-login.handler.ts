@@ -66,11 +66,11 @@ export class AuthLoginHandler {
     // TODO: validate user confirmed
     if (!user.confirmed) {
       const token = await this._userTokenCreateService.execute(user._id);
-      console.log('Confirmation token:', token);
-      //await this._sendEmailQueue.addJob({ email: user.email, code: token });
+      await this._sendEmailQueue.addJob({ email: user.email, code: token });
       return { tokenConfirm: this._jwtRepository.generateConfirmAccount({ sub: user._id }) };
     }
 
+    // TODO: generate tokens
     const payload = { username: user.username, sub: user._id };
     const token = this._jwtRepository.generate(payload);
     const tokenRefresh = this._jwtRepository.generateRefresh(payload);
@@ -83,7 +83,6 @@ export class AuthLoginHandler {
         surnames: user.surnames,
         username: user.username,
         email: user.email,
-        confirmed: user.confirmed,
       },
     };
   }

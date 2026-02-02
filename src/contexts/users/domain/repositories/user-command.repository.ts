@@ -23,7 +23,28 @@ export abstract class IUserCommandRepository {
    */
   abstract update(data: User): Promise<User>;
 
+  /**
+   * @description Update the number of failed login attempts
+   * @date 2026-02-02 06:51:05
+   * @author Jogan Ortiz Muñoz
+   *
+   * @abstract
+   * @param {UserId} _id
+   * @param {number} attempts
+   * @returns {Promise<void>}
+   */
   abstract updateLoginAttempts(_id: UserId, attempts: number): Promise<void>;
+
+  /**
+   * @description Update user confirmed status
+   * @date 2026-02-02 06:52:03
+   * @author Jogan Ortiz Muñoz
+   *
+   * @abstract
+   * @param {UserId} _id
+   * @returns {Promise<void>}
+   */
+  abstract updateConfirmed(_id: UserId): Promise<void>;
 
   /**
    * @description Delete user by Id

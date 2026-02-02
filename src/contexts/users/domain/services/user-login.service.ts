@@ -17,15 +17,7 @@ export class UserLoginService {
     // TODO: Check if user exist
     const user = await this._userQueryRepository.findOneByLogin(username);
 
-    /* if (user && user.lockUntil && user.lockUntil > new Date()) {
-      console.log('User is locked');
-      // TODO: Update login attempts
-      const failedAttempts = !user.failedAttempts || isNaN(user.failedAttempts) ? 0 : user.failedAttempts;
-      await this._userCommandRepository.updateLoginAttempts(new UserId(user._id), failedAttempts + 1);
-    }
-
-    console.log(user); */
-
+    if (!user) return null;
     return user;
   }
 }

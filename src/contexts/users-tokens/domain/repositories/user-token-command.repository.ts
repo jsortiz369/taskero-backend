@@ -1,6 +1,6 @@
 import { UserToken } from '../user-token';
 
-export abstract class UserTokenCommandRepository {
+export abstract class IUserTokenCommandRepository {
   /**
    * @description Create new token y user
    * @date 2026-01-26 06:40:44

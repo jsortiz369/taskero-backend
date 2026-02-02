@@ -81,6 +81,13 @@ import * as handlers from './application';
       inject: [IUserQueryRepository, IUserCommandRepository],
     },
     {
+      provide: services.UserUpdateConfirmService,
+      useFactory: (userCommand: IUserCommandRepository) => {
+        return new services.UserUpdateConfirmService(userCommand);
+      },
+      inject: [IUserCommandRepository],
+    },
+    {
       provide: handlers.UserFindAllHandler,
       useFactory: (userQuery: IUserQueryRepository) => {
         return new handlers.UserFindAllHandler(userQuery);
@@ -103,6 +110,7 @@ import * as handlers from './application';
     services.UserCreateService,
     services.UserUpdateFailedAttemptsByIdService,
     services.UserLoginService,
+    services.UserUpdateConfirmService,
   ],
 })
 export class UsersModule {}

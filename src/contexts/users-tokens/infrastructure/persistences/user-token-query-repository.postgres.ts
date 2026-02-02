@@ -1,9 +1,9 @@
 import { Nullable } from 'src/shared/system/domain/system.interface';
 import { UserTokenCurrentByIdUserProjection } from '../../domain/projections';
-import { UserTokenQueryRepository } from '../../domain/repositories/user-token-query.repository';
+import { IUserTokenQueryRepository } from '../../domain/repositories';
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
 
-export class UserTokenQueryRepositoryPostgres implements UserTokenQueryRepository {
+export class UserTokenQueryRepositoryPostgres implements IUserTokenQueryRepository {
   /**
    * Creates an instance of UserTokenQueryRepositoryPostgres.
    * @date 2026-01-31 07:45:59

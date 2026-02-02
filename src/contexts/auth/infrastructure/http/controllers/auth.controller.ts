@@ -10,6 +10,7 @@ import * as checkPhone from 'src/contexts/auth/application/queries/auth-register
 import * as register from 'src/contexts/auth/application/commands/auth-register';
 import * as login from 'src/contexts/auth/application/commands/auth-login';
 import * as confirm from 'src/contexts/auth/application/commands/auth-confirm';
+import * as resendConfirmationToken from 'src/contexts/auth/application/commands/auth-resend-confirmation-token';
 
 @Controller(ROUTES.AUTH)
 export class AuthController {
@@ -20,6 +21,7 @@ export class AuthController {
     private readonly _registerHandler: register.AuthRegisterHandler,
     private readonly _loginHandler: login.AuthLoginHandler,
     private readonly _confirmHandler: confirm.AuthConfirmHandler,
+    private readonly _resendConfirmationTokenHandler: resendConfirmationToken.AuthResendConfirmationTokenHandler,
   ) {}
 
   @Get('/register/conflict/username')
@@ -55,5 +57,14 @@ export class AuthController {
   @Post('/confirm')
   async confirmAccount(@Body() body: AuthConfirmDto, @Req() request: FastifyRequest) {
     return await this._confirmHandler.execute(new confirm.AuthConfirmCommand(body.otp, request['idUser'] as string));
+  }
+
+  @UseGuards(ConfirmGuard)
+  @HttpCode(HttpStatus.OK)
+  @Post('/resend-confirmation-token')
+  async resendConfirmationToken(@Req() request: FastifyRequest) {
+    return await this._resendConfirmationTokenHandler.execute(
+      new resendConfirmationToken.AuthResendConfirmationTokenCommand(request['idUser'] as string),
+    );
   }
 }

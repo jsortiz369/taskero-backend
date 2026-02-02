@@ -1,12 +1,26 @@
-import { UserQueryFindOneByIdService } from 'src/contexts/users/domain/services';
+import { UserQueryFindOneByIdService, UserUpdateConfirmService } from 'src/contexts/users/domain/services';
 import { AuthConfirmCommand } from './auth-confirm.command';
 import { AccountAlreadyConfirmedException } from 'src/contexts/auth/domain/exceptions';
 import { UserTokenCompareService } from 'src/contexts/users-tokens/domain/services';
+import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
 
 export class AuthConfirmHandler {
+  /**
+   * Creates an instance of AuthConfirmHandler.
+   * @date 2026-02-02 07:01:33
+   * @author Jogan Ortiz Muñoz
+   *
+   * @constructor
+   * @param {UserQueryFindOneByIdService} _userQueryFindOneByIdService
+   * @param {UserTokenCompareService} _userTokenCompareService
+   * @param {UserUpdateConfirmService} _userUpdateConfirmService
+   * @param {IJwtRepository} _jwtRepository
+   */
   constructor(
     private readonly _userQueryFindOneByIdService: UserQueryFindOneByIdService,
     private readonly _userTokenCompareService: UserTokenCompareService,
+    private readonly _userUpdateConfirmService: UserUpdateConfirmService,
+    private readonly _jwtRepository: IJwtRepository,
   ) {}
 
   async execute(command: AuthConfirmCommand) {
@@ -20,8 +34,22 @@ export class AuthConfirmHandler {
     await this._userTokenCompareService.execute(command.idUser, command.otp);
 
     // TODO: confirm account
-    console.log(`Account confirmed for user ID: ${command.idUser}`);
+    await this._userUpdateConfirmService.execute(command.idUser);
 
-    return Promise.resolve('Account confirmed successfully');
+    // TODO: generate tokens
+    const payload = { username: user.username, sub: user._id };
+    const token = this._jwtRepository.generate(payload);
+    const tokenRefresh = this._jwtRepository.generateRefresh(payload);
+
+    return {
+      token: token,
+      tokenRefresh: tokenRefresh,
+      data: {
+        names: user.names,
+        surnames: user.surnames,
+        username: user.username,
+        email: user.email,
+      },
+    };
   }
 }

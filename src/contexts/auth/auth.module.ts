@@ -34,9 +34,13 @@ import * as handlers from './application';
     },
     {
       provide: handlers.AuthRegisterHandler,
-      useFactory: (userCreate: servicesUser.UserCreateService, IJwtRepository: IJwtRepository) =>
-        new handlers.AuthRegisterHandler(userCreate, IJwtRepository),
-      inject: [servicesUser.UserCreateService, IJwtRepository],
+      useFactory: (
+        userCreate: servicesUser.UserCreateService,
+        IJwtRepository: IJwtRepository,
+        userTokenCreateService: UserTokenCreateService,
+        sendEmailQueue: ISendEmailBullmqRepository,
+      ) => new handlers.AuthRegisterHandler(userCreate, IJwtRepository, userTokenCreateService, sendEmailQueue),
+      inject: [servicesUser.UserCreateService, IJwtRepository, UserTokenCreateService, ISendEmailBullmqRepository],
     },
     {
       provide: handlers.AuthLoginHandler,
@@ -70,9 +74,23 @@ import * as handlers from './application';
     },
     {
       provide: handlers.AuthConfirmHandler,
-      useFactory: (userById: servicesUser.UserQueryFindOneByIdService, userTokenCompare: UserTokenCompareService) =>
-        new handlers.AuthConfirmHandler(userById, userTokenCompare),
-      inject: [servicesUser.UserQueryFindOneByIdService, UserTokenCompareService],
+      useFactory: (
+        userById: servicesUser.UserQueryFindOneByIdService,
+        userTokenCompare: UserTokenCompareService,
+        userUpdateConfirm: servicesUser.UserUpdateConfirmService,
+        jwtRepository: IJwtRepository,
+      ) => new handlers.AuthConfirmHandler(userById, userTokenCompare, userUpdateConfirm, jwtRepository),
+      inject: [servicesUser.UserQueryFindOneByIdService, UserTokenCompareService, servicesUser.UserUpdateConfirmService, IJwtRepository],
+    },
+
+    {
+      provide: handlers.AuthResendConfirmationTokenHandler,
+      useFactory: (
+        userById: servicesUser.UserQueryFindOneByIdService,
+        userTokenCreate: UserTokenCreateService,
+        sendEmailQueue: ISendEmailBullmqRepository,
+      ) => new handlers.AuthResendConfirmationTokenHandler(userById, userTokenCreate, sendEmailQueue),
+      inject: [servicesUser.UserQueryFindOneByIdService, UserTokenCreateService, ISendEmailBullmqRepository],
     },
   ],
 })
