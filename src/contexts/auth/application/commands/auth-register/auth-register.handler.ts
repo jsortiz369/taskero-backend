@@ -29,8 +29,8 @@ export class AuthRegisterHandler {
     const userPrimitive = result.toValuesPrimitives();
 
     // TODO: create token to confirm account
-    const token = await this._userTokenCreateService.execute(userPrimitive._id);
-    await this._sendEmailQueue.addJob({ email: userPrimitive.email, code: token });
+    const token = await this._userTokenCreateService.execute(userPrimitive._id, 'CONFIRM_ACCOUNT');
+    await this._sendEmailQueue.addJobConfirmAccount({ email: userPrimitive.email, code: token });
 
     // TODO: create token confirmed account
     return { tokenConfirm: this._jwtRepository.generateConfirmAccount({ sub: userPrimitive._id }) };

@@ -1,3 +1,9 @@
 export const QUEUE = {
-  EMAILS: 'send-emails',
+  EMAILS: {
+    NAME: 'send-emails',
+    PROCESS: {
+      CONFIRM_ACCOUNT: 'confirm-account',
+      RESET_PASSWORD: 'reset-password',
+    },
+  },
 };

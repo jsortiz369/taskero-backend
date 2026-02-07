@@ -1,6 +1,7 @@
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 import { NoTokenExistsException, TokenExpiredException, TokenNotEqualException } from '../exceptions';
 import { IUserTokenQueryRepository } from '../repositories/user-token-query.repository';
+import { UserTokenTypes } from '../user-token.interface';
 
 export class UserTokenCompareService {
   /**
@@ -17,8 +18,8 @@ export class UserTokenCompareService {
     private readonly _bcryptRepository: IBcryptRepository,
   ) {}
 
-  async execute(idUser: string, token: string): Promise<void> {
-    const result = await this._userTokenRepository.findCurrentByIdUser(idUser);
+  async execute(idUser: string, token: string, type: UserTokenTypes): Promise<void> {
+    const result = await this._userTokenRepository.findCurrentByIdUser(idUser, type);
     if (!result) throw new NoTokenExistsException();
 
     // TODO: validate token

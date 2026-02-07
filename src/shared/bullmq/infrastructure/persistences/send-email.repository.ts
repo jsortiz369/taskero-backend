@@ -14,7 +14,7 @@ export class SendEmailRepository implements ISendEmailBullmqRepository {
    * @constructor
    * @param {Queue} queue
    */
-  constructor(@InjectQueue(QUEUE.EMAILS) private readonly queue: Queue) {}
+  constructor(@InjectQueue(QUEUE.EMAILS.NAME) private readonly queue: Queue) {}
 
   /**
    * @description Registe new job
@@ -25,7 +25,7 @@ export class SendEmailRepository implements ISendEmailBullmqRepository {
    * @param {BullmqSendEmail} data
    * @returns {Promise<Job<any, any, string>>}
    */
-  async addJob(data: BullmqSendEmail): Promise<Job<any, any, string>> {
-    return this.queue.add('send-email', data);
+  async addJobConfirmAccount(data: BullmqSendEmail): Promise<Job<any, any, string>> {
+    return this.queue.add(QUEUE.EMAILS.PROCESS.CONFIRM_ACCOUNT, data);
   }
 }

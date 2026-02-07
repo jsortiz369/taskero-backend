@@ -25,8 +25,8 @@ export class AuthResendConfirmationTokenHandler {
     const user = await this._userQueryFindOneByIdService.execute(command.idUser);
 
     // TODO: create token to confirm account
-    const token = await this._userTokenCreateService.execute(user._id);
-    await this._sendEmailQueue.addJob({ email: user.email, code: token });
+    const token = await this._userTokenCreateService.execute(user._id, 'CONFIRM_ACCOUNT');
+    await this._sendEmailQueue.addJobConfirmAccount({ email: user.email, code: token });
 
     return { success: true };
   }

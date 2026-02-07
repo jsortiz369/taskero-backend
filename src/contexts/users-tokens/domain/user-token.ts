@@ -1,6 +1,6 @@
 import { UserId } from 'src/contexts/users/domain/vo';
 import * as vo from './vo';
-import { UserTokenCreatePrimitive } from './user-token.interface';
+import { UserTokenCreatePrimitive, UserTokenPrimitive, UserTokenTypes } from './user-token.interface';
 
 export class UserToken {
   /**
@@ -17,16 +17,17 @@ export class UserToken {
   constructor(
     private readonly _idVO: vo.UserTokenId,
     private userIdVO: UserId,
+    private type: UserTokenTypes,
     private tokenVO: string,
     private expiresAt: Date,
   ) {}
 
   static create(primitive: UserTokenCreatePrimitive): UserToken {
-    return new UserToken(new vo.UserTokenId(primitive._id), new UserId(primitive.userId), primitive.token, primitive.expiresAt);
+    return new UserToken(new vo.UserTokenId(primitive._id), new UserId(primitive.userId), primitive.type, primitive.token, primitive.expiresAt);
   }
 
-  static fromPrimitives(primitive: { _id: string; userId: string; token: string; expiresAt: Date }): UserToken {
-    return new UserToken(new vo.UserTokenId(primitive._id), new UserId(primitive.userId), primitive.token, primitive.expiresAt);
+  static fromPrimitives(primitive: UserTokenPrimitive): UserToken {
+    return new UserToken(new vo.UserTokenId(primitive._id), new UserId(primitive.userId), primitive.type, primitive.token, primitive.expiresAt);
   }
 
   toValuesPrimitives(): { _id: string; userId: string; token: string; expiresAt: Date } {
@@ -53,5 +54,9 @@ export class UserToken {
 
   get expiresAtValue(): Date {
     return this.expiresAt;
+  }
+
+  get typeValue(): UserTokenTypes {
+    return this.type;
   }
 }

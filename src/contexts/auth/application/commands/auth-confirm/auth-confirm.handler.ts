@@ -31,7 +31,7 @@ export class AuthConfirmHandler {
     if (user.confirmed) throw new AccountAlreadyConfirmedException();
 
     // TODO: validate token exists by user id and compare token
-    await this._userTokenCompareService.execute(command.idUser, command.otp);
+    await this._userTokenCompareService.execute(command.idUser, command.otp, 'CONFIRM_ACCOUNT');
 
     // TODO: confirm account
     await this._userUpdateConfirmService.execute(command.idUser);

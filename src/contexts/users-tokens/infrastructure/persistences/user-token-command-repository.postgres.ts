@@ -1,3 +1,5 @@
+import { $Enums } from 'generated/prisma';
+
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
 import { UserToken } from '../../domain/user-token';
 import { IUserTokenCommandRepository } from '../../domain/repositories';
@@ -26,6 +28,7 @@ export class UserTokenCommandRepositoryPostgres implements IUserTokenCommandRepo
     await this._prisma.userTokens.create({
       data: {
         id: userToken._id._value,
+        type: $Enums.UserTokenEnum[userToken.typeValue],
         token: userToken.token,
         userId: userToken._idUser._value,
         expiresAt: userToken.expiresAtValue,

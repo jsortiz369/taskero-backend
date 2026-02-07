@@ -7,7 +7,7 @@ import { QUEUE } from 'src/shared/system/domain/constants/queue.constant';
 import { BullmqSendEmail } from '../../domain/interfaces/send-email.interface';
 import { IEmailsRepository } from 'src/shared/emails/domain/emails.repository';
 
-@Processor(QUEUE.EMAILS, { concurrency: 2 })
+@Processor(QUEUE.EMAILS.NAME, { concurrency: 2 })
 export class SendEmailWorker extends WorkerHost {
   /**
    * Creates an instance of SendEmailWorker.
@@ -21,7 +21,12 @@ export class SendEmailWorker extends WorkerHost {
     super();
   }
 
-  async process(job: Job<BullmqSendEmail>): Promise<any> {
+  async process(job: Job<BullmqSendEmail>) {
+    if (job.name === QUEUE.EMAILS.PROCESS.CONFIRM_ACCOUNT) return this.processConfirmAccount(job);
+    return this.processResetPassword(job);
+  }
+
+  private async processConfirmAccount(job: Job<BullmqSendEmail>) {
     const pathTemplate = path.join(process.cwd(), 'uploads/templates', 'send-code-verify.html');
     if (!fs.existsSync(pathTemplate)) throw new Error('Template not found');
     let template = fs.readFileSync(pathTemplate, 'utf-8');
@@ -35,5 +40,9 @@ export class SendEmailWorker extends WorkerHost {
 
     console.log(result);
     return job.data;
+  }
+
+  private async processResetPassword(job: Job<BullmqSendEmail>) {
+    console.log('reset password');
   }
 }

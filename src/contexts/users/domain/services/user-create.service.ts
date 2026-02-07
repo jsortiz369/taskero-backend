@@ -1,4 +1,4 @@
-import { IUuidRepository } from 'src/shared/uuid/domain/uuid.repository';
+import { ICryptoRepository } from 'src/shared/crypto/domain/crypto.repository';
 import { UserPasswordCreateService } from 'src/contexts/users-passwords/domain/services';
 import { UserCreateCommand } from '../../application/commands/user-create';
 import { IUserCommandRepository } from '../repositories';
@@ -14,7 +14,7 @@ export class UserCreateService {
    * @author Jogan Ortiz Muñoz
    *
    * @constructor
-   * @param {IUuidRepository} _uuidRepository
+   * @param {ICryptoRepository} _cryptoRepository
    * @param {UserConflictUsernameService} _conflictUsername
    * @param {UserConflictEmailService} _conflictEmail
    * @param {UserConflictPhoneService} _conflictPhone
@@ -22,7 +22,7 @@ export class UserCreateService {
    * @param {UserPasswordCreateService} _userPasswordCreateService
    */
   constructor(
-    private readonly _uuidRepository: IUuidRepository,
+    private readonly _cryptoRepository: ICryptoRepository,
     private readonly _conflictUsername: UserConflictUsernameService,
     private readonly _conflictEmail: UserConflictEmailService,
     private readonly _conflictPhone: UserConflictPhoneService,
@@ -33,7 +33,7 @@ export class UserCreateService {
   async execute(command: UserCreateCommand): Promise<User> {
     // TODO: entity create user
     const userEntity = User.create({
-      _id: this._uuidRepository.generateUuid(),
+      _id: this._cryptoRepository.generateUuidV4(),
       names: command.names,
       surnames: command.surnames,
       username: command.username,

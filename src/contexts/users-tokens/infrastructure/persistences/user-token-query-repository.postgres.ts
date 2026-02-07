@@ -1,7 +1,10 @@
+import { UserTokenEnum } from 'generated/prisma';
+
 import { Nullable } from 'src/shared/system/domain/system.interface';
 import { UserTokenCurrentByIdUserProjection } from '../../domain/projections';
 import { IUserTokenQueryRepository } from '../../domain/repositories';
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
+import { UserTokenTypes } from '../../domain/user-token.interface';
 
 export class UserTokenQueryRepositoryPostgres implements IUserTokenQueryRepository {
   /**
@@ -21,11 +24,16 @@ export class UserTokenQueryRepositoryPostgres implements IUserTokenQueryReposito
    *
    * @async
    * @param {string} idUser
+   * @param {UserTokenTypes} typeToken
    * @returns {Promise<Nullable<UserTokenCurrentByIdUserProjection>>}
    */
-  async findCurrentByIdUser(idUser: string): Promise<Nullable<UserTokenCurrentByIdUserProjection>> {
+  async findCurrentByIdUser(idUser: string, typeToken: UserTokenTypes): Promise<Nullable<UserTokenCurrentByIdUserProjection>> {
+    let type: UserTokenEnum = UserTokenEnum.CONFIRM_ACCOUNT;
+    if (typeToken === 'LOGIN_EXTRA') type = UserTokenEnum.LOGIN_EXTRA;
+    if (typeToken === 'RESET_PASSWORD') type = UserTokenEnum.RESET_PASSWORD;
+
     const result = await this._prisma.userTokens.findFirst({
-      where: { userId: idUser },
+      where: { userId: idUser, type: type },
       orderBy: { expiresAt: 'desc' },
       select: { token: true, expiresAt: true },
     });

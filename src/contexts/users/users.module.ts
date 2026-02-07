@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
 
 import { UsersPasswordsModule } from '../users-passwords/users-passwords.module';
-import { UuidModule } from 'src/shared/uuid/uuid.module';
+import { CryptoModule } from 'src/shared/crypto/crypto.module';
 import { IUserQueryRepository, IUserCommandRepository } from './domain/repositories';
 import { UserQueryRepositoryPostgres, UserCommandRepositoryPostgres } from './infrastructure/persistences';
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
-import { IUuidRepository } from 'src/shared/uuid/domain/uuid.repository';
+import { ICryptoRepository } from 'src/shared/crypto/domain/crypto.repository';
 import { UserPasswordCreateService } from '../users-passwords/domain/services';
 import * as services from './domain/services';
 import * as controllers from './infrastructure/http/controllers';
 import * as handlers from './application';
 
 @Module({
-  imports: [UuidModule, UsersPasswordsModule],
+  imports: [CryptoModule, UsersPasswordsModule],
   controllers: [controllers.UserController],
   providers: [
     {
@@ -48,7 +48,7 @@ import * as handlers from './application';
     {
       provide: services.UserCreateService,
       useFactory: (
-        uuid: IUuidRepository,
+        uuid: ICryptoRepository,
         conflictUsername: services.UserConflictUsernameService,
         conflictEmail: services.UserConflictEmailService,
         conflictPhone: services.UserConflictPhoneService,
@@ -58,7 +58,7 @@ import * as handlers from './application';
         return new services.UserCreateService(uuid, conflictUsername, conflictEmail, conflictPhone, userCommand, userPasswordCreateService);
       },
       inject: [
-        IUuidRepository,
+        ICryptoRepository,
         services.UserConflictUsernameService,
         services.UserConflictEmailService,
         services.UserConflictPhoneService,

@@ -1,10 +1,19 @@
 model UserTokens {
-    id          String      @db.Uuid @id @default(dbgenerated("gen_random_uuid()")) @map("_id")
-    userId      String      @db.Uuid @map("user_id")
-    token       String      @db.VarChar(255)
-    expiresAt   DateTime    @db.Timestamp @default(dbgenerated("now()")) @map("expires_at")
+    id          String          @db.Uuid @id @default(dbgenerated("gen_random_uuid()")) @map("_id")
+    userId      String          @db.Uuid @map("user_id")
+    type        UserTokenEnum?  @default(CONFIRM_ACCOUNT)
+    token       String          @db.VarChar(255)
+    expiresAt   DateTime        @db.Timestamp @default(dbgenerated("now()")) @map("expires_at")
 
-    user        User        @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+    user        User            @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
     @@map("users_tokens")
     @@schema("system")
+}
+
+enum UserTokenEnum {
+  CONFIRM_ACCOUNT
+  LOGIN_EXTRA
+  RESET_PASSWORD
+
+  @@schema("system")
 }

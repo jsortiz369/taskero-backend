@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 
-import { UuidModule } from 'src/shared/uuid/uuid.module';
+import { CryptoModule } from 'src/shared/crypto/crypto.module';
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
-import { IUuidRepository } from 'src/shared/uuid/domain/uuid.repository';
 import { BcryptModule } from 'src/shared/bcrypt/bcrypt.module';
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
+import { ICryptoRepository } from 'src/shared/crypto/domain/crypto.repository';
 import { IUserTokenCommandRepository, IUserTokenQueryRepository } from './domain/repositories';
 import { UserTokenCommandRepositoryPostgres, UserTokenQueryRepositoryPostgres } from './infrastructure/persistences';
 import * as services from './domain/services';
 
 @Module({
-  imports: [UuidModule, BcryptModule],
+  imports: [CryptoModule, BcryptModule],
   providers: [
     {
       provide: IUserTokenCommandRepository,
@@ -24,9 +24,9 @@ import * as services from './domain/services';
     },
     {
       provide: services.UserTokenCreateService,
-      useFactory: (uuid: IUuidRepository, bcrypt: IBcryptRepository, userCommand: IUserTokenCommandRepository) =>
+      useFactory: (uuid: ICryptoRepository, bcrypt: IBcryptRepository, userCommand: IUserTokenCommandRepository) =>
         new services.UserTokenCreateService(uuid, bcrypt, userCommand),
-      inject: [IUuidRepository, IBcryptRepository, IUserTokenCommandRepository],
+      inject: [ICryptoRepository, IBcryptRepository, IUserTokenCommandRepository],
     },
     {
       provide: services.UserTokenCompareService,

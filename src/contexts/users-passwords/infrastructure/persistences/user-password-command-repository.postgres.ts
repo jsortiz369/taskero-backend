@@ -37,7 +37,20 @@ export class UserPasswordCommandRepositoryPostgres implements IUserPasswordComma
     return userPassword;
   }
 
+  /**
+   * @description Disable password current
+   * @date 2026-02-04 07:00:59
+   * @author Jogan Ortiz Muñoz
+   *
+   * @async
+   * @param {UserId} userId
+   * @returns {Promise<void>}
+   */
   async disableCreatedPasswordsByUserId(userId: UserId): Promise<void> {
+    const existingPassword = await this._prisma.userPasswords.findFirst({ where: { userId: userId._value, isCurrent: true } });
+    if (!existingPassword) return;
+
+    // TODO: Update password isCurrent to false
     await this._prisma.userPasswords.update({
       where: { userId: userId._value, isCurrent: true },
       data: { isCurrent: false },

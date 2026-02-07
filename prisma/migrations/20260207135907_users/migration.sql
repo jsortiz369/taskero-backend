@@ -1,6 +1,9 @@
 -- CreateSchema
 CREATE SCHEMA IF NOT EXISTS "system";
 
+-- CreateEnum
+CREATE TYPE "system"."UserTokenEnum" AS ENUM ('CONFIRM_ACCOUNT', 'LOGIN_EXTRA', 'RESET_PASSWORD');
+
 -- CreateTable
 CREATE TABLE "system"."users_passwords" (
     "_id" UUID NOT NULL DEFAULT gen_random_uuid(),
@@ -16,6 +19,7 @@ CREATE TABLE "system"."users_passwords" (
 CREATE TABLE "system"."users_tokens" (
     "_id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "user_id" UUID NOT NULL,
+    "type" "system"."UserTokenEnum" DEFAULT 'CONFIRM_ACCOUNT',
     "token" VARCHAR(255) NOT NULL,
     "expires_at" TIMESTAMP NOT NULL DEFAULT now(),
 

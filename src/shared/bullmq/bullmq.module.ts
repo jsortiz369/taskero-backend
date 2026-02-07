@@ -20,7 +20,7 @@ import { IEmailsRepository } from '../emails/domain/emails.repository';
       }),
       inject: [IEnvRepository],
     }),
-    BullModule.registerQueue({ name: QUEUE.EMAILS }),
+    BullModule.registerQueue({ name: QUEUE.EMAILS.NAME }),
   ],
   providers: [
     {

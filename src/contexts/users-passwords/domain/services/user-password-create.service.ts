@@ -1,7 +1,7 @@
-import { IUuidRepository } from 'src/shared/uuid/domain/uuid.repository';
 import { IUserPasswordCommandRepository } from '../repositories/user-password-command.repository';
 import { UserPassword } from '../user-password';
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
+import { ICryptoRepository } from 'src/shared/crypto/domain/crypto.repository';
 
 export class UserPasswordCreateService {
   /**
@@ -10,19 +10,19 @@ export class UserPasswordCreateService {
    * @author Jogan Ortiz Muñoz
    *
    * @constructor
-   * @param {IUuidRepository} _uuidRepository
+   * @param {ICryptoRepository} _uuidRepository
    * @param {IBcryptRepository} _bcryptRepository
    * @param {IUserPasswordCommandRepository} _userPasswordCommandRepository
    */
   constructor(
-    private readonly _uuidRepository: IUuidRepository,
+    private readonly _cryptoRepository: ICryptoRepository,
     private readonly _bcryptRepository: IBcryptRepository,
     private readonly _userPasswordCommandRepository: IUserPasswordCommandRepository,
   ) {}
 
   async execute(userId: string, password: string): Promise<UserPassword> {
     const userPassword = UserPassword.create({
-      _id: this._uuidRepository.generateUuid(),
+      _id: this._cryptoRepository.generateUuidV4(),
       userId,
       password: await this._bcryptRepository.hash(password),
       isCurrent: true,
