@@ -1,7 +1,7 @@
 import { UserQueryFindOneByIdService, UserUpdateConfirmService } from 'src/contexts/users/domain/services';
 import { AuthConfirmCommand } from './auth-confirm.command';
 import { AccountAlreadyConfirmedException } from 'src/contexts/auth/domain/exceptions';
-import { UserTokenCompareService } from 'src/contexts/users-tokens/domain/services';
+import { UserTokenCompareService, UserTokenUpdateUsedService } from 'src/contexts/users-tokens/domain/services';
 import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
 
 export class AuthConfirmHandler {
@@ -21,6 +21,7 @@ export class AuthConfirmHandler {
     private readonly _userTokenCompareService: UserTokenCompareService,
     private readonly _userUpdateConfirmService: UserUpdateConfirmService,
     private readonly _jwtRepository: IJwtRepository,
+    private readonly _updatedUsedTokenService: UserTokenUpdateUsedService,
   ) {}
 
   async execute(command: AuthConfirmCommand) {
@@ -31,10 +32,13 @@ export class AuthConfirmHandler {
     if (user.confirmed) throw new AccountAlreadyConfirmedException();
 
     // TODO: validate token exists by user id and compare token
-    await this._userTokenCompareService.execute(command.idUser, command.otp, 'CONFIRM_ACCOUNT');
+    const resultToken = await this._userTokenCompareService.execute(command.idUser, command.otp, 'CONFIRM_ACCOUNT');
 
     // TODO: confirm account
     await this._userUpdateConfirmService.execute(command.idUser);
+
+    // TODO: update token used
+    await this._updatedUsedTokenService.execute(resultToken._id);
 
     // TODO: generate tokens
     const payload = { username: user.username, sub: user._id };

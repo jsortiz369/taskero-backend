@@ -29,8 +29,9 @@ import { IEmailsRepository } from '../emails/domain/emails.repository';
     },
     {
       provide: SendEmailWorker,
-      useFactory: (_sendEmailsRepository: IEmailsRepository) => new SendEmailWorker(_sendEmailsRepository),
-      inject: [IEmailsRepository],
+      useFactory: (_envRepository: IEnvRepository, _sendEmailsRepository: IEmailsRepository) =>
+        new SendEmailWorker(_envRepository, _sendEmailsRepository),
+      inject: [IEnvRepository, IEmailsRepository],
     },
   ],
   exports: [ISendEmailBullmqRepository],

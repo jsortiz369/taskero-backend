@@ -1,4 +1,4 @@
-import { UserLoginService, UserUpdateFailedAttemptsByIdService } from 'src/contexts/users/domain/services';
+import { UserAuthService, UserUpdateFailedAttemptsByIdService } from 'src/contexts/users/domain/services';
 import { AuthLoginCommand } from './auth-login.command';
 import { UserPasswordByIdUserService } from 'src/contexts/users-passwords/domain/services';
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
@@ -14,7 +14,7 @@ export class AuthLoginHandler {
    * @author Jogan Ortiz Muñoz
    *
    * @constructor
-   * @param {UserLoginService} _userLoginService
+   * @param {UserAuthService} _userAuthService
    * @param {UserPasswordByIdUserService} _userPasswordByIdUserService
    * @param {UserUpdateFailedAttemptsByIdService} _userUpdateFailedAttemptsService
    * @param {IBcryptRepository} _bycryptRepository
@@ -22,7 +22,7 @@ export class AuthLoginHandler {
    * @param {IJwtRepository} _jwtRepository
    */
   constructor(
-    private readonly _userLoginService: UserLoginService,
+    private readonly _userAuthService: UserAuthService,
     private readonly _userPasswordByIdUserService: UserPasswordByIdUserService,
     private readonly _userUpdateFailedAttemptsService: UserUpdateFailedAttemptsByIdService,
     private readonly _bycryptRepository: IBcryptRepository,
@@ -33,7 +33,7 @@ export class AuthLoginHandler {
 
   async execute(command: AuthLoginCommand) {
     // TODO: validate user
-    const user = await this._userLoginService.execute(command.username);
+    const user = await this._userAuthService.execute(command.username);
     if (!user) throw new E.UserOrPasswordNotCorrectException();
 
     // TODO: update failed attempts

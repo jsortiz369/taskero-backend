@@ -1,5 +1,5 @@
 import { Job } from 'bullmq';
-import { BullmqSendEmail } from '../interfaces/send-email.interface';
+import { SendEmailConfirmAccount, SendEmailResetPassword } from '../interfaces/send-email.interface';
 
 export abstract class ISendEmailBullmqRepository {
   /**
@@ -8,8 +8,19 @@ export abstract class ISendEmailBullmqRepository {
    * @author Jogan Ortiz Muñoz
    *
    * @abstract
-   * @param {BullmqSendEmail} data
+   * @param {SendEmailConfirmAccount} data
    * @returns {Promise<Job<any, any, string>>}
    */
-  abstract addJobConfirmAccount(data: BullmqSendEmail): Promise<Job<any, any, string>>;
+  abstract addJobConfirmAccount(data: SendEmailConfirmAccount): Promise<Job<any, any, string>>;
+
+  /**
+   * @description Register new job by reset password
+   * @date 2026-02-08 15:52:37
+   * @author Jogan Ortiz Muñoz
+   *
+   * @abstract
+   * @param {SendEmailResetPassword} data
+   * @returns {Promise<Job<any, any, string>>}
+   */
+  abstract addJobResetPassword(data: SendEmailResetPassword): Promise<Job<any, any, string>>;
 }

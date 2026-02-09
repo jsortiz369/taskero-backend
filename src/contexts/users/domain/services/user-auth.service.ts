@@ -1,10 +1,10 @@
 import { Nullable } from 'src/shared/system/domain/system.interface';
 import { IUserQueryRepository } from '../repositories';
-import { UserLoginProjection } from '../projections/user-login.projection';
+import { UserAuthProjection } from '../projections';
 
-export class UserLoginService {
+export class UserAuthService {
   /**
-   * Creates an instance of UserLoginService.
+   * Creates an instance of UserAuthService.
    * @date 2026-01-17 17:18:08
    * @author Jogan Ortiz Muñoz
    *
@@ -13,11 +13,11 @@ export class UserLoginService {
    */
   constructor(private readonly _userQueryRepository: IUserQueryRepository) {}
 
-  async execute(username: string): Promise<Nullable<UserLoginProjection>> {
+  async execute(username: string): Promise<Nullable<UserAuthProjection>> {
     // TODO: Check if user exist
     const user = await this._userQueryRepository.findOneByLogin(username);
-
     if (!user) return null;
+
     return user;
   }
 }

@@ -1,1 +1,1 @@
-export { UserTokenCurrentByIdUserProjection } from './user-token-current-by-id-user.projection';
+export { UserTokenCurrentProjection } from './user-token-current.projection';

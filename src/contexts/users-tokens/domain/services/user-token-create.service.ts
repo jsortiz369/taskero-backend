@@ -2,7 +2,6 @@ import { UserToken } from '../user-token';
 import { UserId } from 'src/contexts/users/domain/vo';
 import { UserTokenId } from '../vo';
 import { IUserTokenCommandRepository } from '../repositories';
-import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 import { UserTokenTypes } from '../user-token.interface';
 import { ICryptoRepository } from 'src/shared/crypto/domain/crypto.repository';
 
@@ -14,26 +13,29 @@ export class UserTokenCreateService {
    *
    * @constructor
    * @param {ICryptoRepository} _cryptoRepository
-   * @param {IBcryptRepository} _bcryptRepository
    * @param {IUserTokenCommandRepository} _userTokenCommandRepository
    */
   constructor(
     private readonly _cryptoRepository: ICryptoRepository,
-    private readonly _bcryptRepository: IBcryptRepository,
     private readonly _userTokenCommandRepository: IUserTokenCommandRepository,
   ) {}
 
   async execute(idUser: string, type: UserTokenTypes): Promise<string> {
-    const random = Math.floor(0 + Math.random() * 1_000_000);
-    const token = random.toString().padStart(6, '0');
+    let token: string | null = null;
+    if (['CONFIRM_ACCOUNT', 'LOGIN_EXTRA'].includes(type)) token = this._cryptoRepository.token({ kind: 'NUMBER' });
+    if (type === 'RESET_PASSWORD') token = this._cryptoRepository.token({ kind: 'ALPHANUMERIC' });
+    if (!token) throw new Error('Token not generated');
+
+    // TODO: calculate expireAt in 15 minutes
     const expireAt = new Date();
     expireAt.setMinutes(expireAt.getMinutes() + 15);
 
+    // TODO: prepare user token
     const userToken = new UserToken(
       new UserTokenId(this._cryptoRepository.generateUuidV4()),
       new UserId(idUser),
       type,
-      await this._bcryptRepository.hash(token),
+      this._cryptoRepository.hash(token),
       expireAt,
     );
 

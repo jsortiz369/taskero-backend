@@ -9,6 +9,6 @@ export class NoTokenExistsException extends NotFoundException {
    * @constructor
    */
   constructor() {
-    super('No existe un token para este usuario.');
+    super('El código de verificación no es válido o ha expirado. Solicita uno nuevo.');
   }
 }

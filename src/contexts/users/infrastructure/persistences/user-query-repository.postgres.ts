@@ -2,11 +2,10 @@ import { Prisma } from 'generated/prisma';
 
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
 import { IUserQueryRepository } from '../../domain/repositories/user-query.repository';
-import { UserFindAllProjection, UserFindOneByIdProjection } from '../../domain/projections';
+import { UserAuthProjection, UserFindAllProjection, UserFindOneByIdProjection } from '../../domain/projections';
 import { DataFindAll, Nullable } from 'src/shared/system/domain/system.interface';
 import { UserFindAll, UserFindAllFilters } from '../../domain/user.interface';
 import { FieldSearchType } from 'src/shared/database/domain/database.interface';
-import { UserLoginProjection } from '../../domain/projections/user-login.projection';
 
 export class UserQueryRepositoryPostgres implements IUserQueryRepository {
   /**
@@ -133,7 +132,16 @@ export class UserQueryRepositoryPostgres implements IUserQueryRepository {
     );
   }
 
-  async findOneByLogin(username: string): Promise<Nullable<UserLoginProjection>> {
+  /**
+   * @description Get User By Login
+   * @date 2026-02-08 14:15:46
+   * @author Jogan Ortiz Muñoz
+   *
+   * @async
+   * @param {string} username
+   * @returns {Promise<Nullable<UserAuthProjection>>}
+   */
+  async findOneByLogin(username: string): Promise<Nullable<UserAuthProjection>> {
     const where: Prisma.UserWhereInput = { deletedAt: null };
     if (username.includes('@')) where.email = username;
     else where.username = username;
@@ -141,7 +149,7 @@ export class UserQueryRepositoryPostgres implements IUserQueryRepository {
     const result = await this._prisma.user.findFirst({ where, omit: { deletedAt: true } });
     if (!result) return null;
 
-    return new UserLoginProjection(
+    return new UserAuthProjection(
       result.id,
       result.names,
       result.surnames,

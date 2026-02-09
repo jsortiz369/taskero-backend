@@ -1,7 +1,7 @@
 import { InjectQueue } from '@nestjs/bullmq';
 import { Job, Queue } from 'bullmq';
 
-import { BullmqSendEmail } from '../../domain/interfaces/send-email.interface';
+import { SendEmailConfirmAccount, SendEmailResetPassword } from '../../domain/interfaces/send-email.interface';
 import { QUEUE } from 'src/shared/system/domain/constants/queue.constant';
 import { ISendEmailBullmqRepository } from '../../domain/repositories/send-email.repository';
 
@@ -22,10 +22,23 @@ export class SendEmailRepository implements ISendEmailBullmqRepository {
    * @author Jogan Ortiz Muñoz
    *
    * @async
-   * @param {BullmqSendEmail} data
+   * @param {SendEmailConfirmAccount} data
    * @returns {Promise<Job<any, any, string>>}
    */
-  async addJobConfirmAccount(data: BullmqSendEmail): Promise<Job<any, any, string>> {
+  async addJobConfirmAccount(data: SendEmailConfirmAccount): Promise<Job<any, any, string>> {
     return this.queue.add(QUEUE.EMAILS.PROCESS.CONFIRM_ACCOUNT, data);
+  }
+
+  /**
+   * @description Register new job by reset password
+   * @date 2026-02-08 15:53:29
+   * @author Jogan Ortiz Muñoz
+   *
+   * @async
+   * @param {SendEmailResetPassword} data
+   * @returns {Promise<Job<any, any, string>>}
+   */
+  async addJobResetPassword(data: SendEmailResetPassword): Promise<Job<any, any, string>> {
+    return this.queue.add(QUEUE.EMAILS.PROCESS.RESET_PASSWORD, data);
   }
 }

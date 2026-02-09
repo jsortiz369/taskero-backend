@@ -5,3 +5,5 @@ export * from './commands/auth-register';
 export * from './commands/auth-login';
 export * from './commands/auth-confirm';
 export * from './commands/auth-resend-confirmation-token';
+export * from './commands/auth-recover-password';
+export * from './commands/auth-reset-password';

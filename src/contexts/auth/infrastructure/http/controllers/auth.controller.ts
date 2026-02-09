@@ -3,7 +3,7 @@ import type { FastifyRequest } from 'fastify';
 
 import { ROUTES } from 'src/app/http/routes';
 import { ConfirmGuard } from 'src/shared/system/infrastructure/guards/confirm.guard';
-import { AuthConfirmDto, AuthLoginDto, AuthRegisterConflictDto, AuthRegisterDto } from '../dto';
+import { AuthConfirmDto, AuthLoginDto, AuthRecoverPasswordDto, AuthRegisterConflictDto, AuthRegisterDto, AuthResetPasswordDto } from '../dto';
 import * as checkUsername from 'src/contexts/auth/application/queries/auth-register-conflict-username';
 import * as checkEmail from 'src/contexts/auth/application/queries/auth-register-conflict-email';
 import * as checkPhone from 'src/contexts/auth/application/queries/auth-register-conflict-phone';
@@ -11,6 +11,8 @@ import * as register from 'src/contexts/auth/application/commands/auth-register'
 import * as login from 'src/contexts/auth/application/commands/auth-login';
 import * as confirm from 'src/contexts/auth/application/commands/auth-confirm';
 import * as resendConfirmationToken from 'src/contexts/auth/application/commands/auth-resend-confirmation-token';
+import * as recoverPassword from 'src/contexts/auth/application/commands/auth-recover-password';
+import * as resetPassword from 'src/contexts/auth/application/commands/auth-reset-password';
 
 @Controller(ROUTES.AUTH)
 export class AuthController {
@@ -22,6 +24,8 @@ export class AuthController {
     private readonly _loginHandler: login.AuthLoginHandler,
     private readonly _confirmHandler: confirm.AuthConfirmHandler,
     private readonly _resendConfirmationTokenHandler: resendConfirmationToken.AuthResendConfirmationTokenHandler,
+    private readonly _recoverPasswordHandler: recoverPassword.AuthRecoverPasswordHandler,
+    private readonly _resetPasswordHandler: resetPassword.AuthResetPasswordHandler,
   ) {}
 
   @Get('/register/conflict/username')
@@ -66,5 +70,17 @@ export class AuthController {
     return await this._resendConfirmationTokenHandler.execute(
       new resendConfirmationToken.AuthResendConfirmationTokenCommand(request['idUser'] as string),
     );
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('/recover-password')
+  async recoverPassword(@Body() body: AuthRecoverPasswordDto) {
+    return await this._recoverPasswordHandler.execute(new recoverPassword.AuthRecoverPasswordCommand(body.username));
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('/reset-password')
+  async resetPassword(@Body() body: AuthResetPasswordDto) {
+    return await this._resetPasswordHandler.execute(new resetPassword.AuthResetPasswordCommand(body.token, body.password));
   }
 }

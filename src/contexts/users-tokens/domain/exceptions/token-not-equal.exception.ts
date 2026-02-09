@@ -9,6 +9,6 @@ export class TokenNotEqualException extends BadRequestException {
    * @constructor
    */
   constructor() {
-    super('Los tokens no son iguales.');
+    super('El código de verificación es incorrecto.');
   }
 }

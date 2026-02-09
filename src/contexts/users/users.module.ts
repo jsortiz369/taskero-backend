@@ -74,9 +74,9 @@ import * as handlers from './application';
       inject: [IUserCommandRepository],
     },
     {
-      provide: services.UserLoginService,
+      provide: services.UserAuthService,
       useFactory: (userQuery: IUserQueryRepository) => {
-        return new services.UserLoginService(userQuery);
+        return new services.UserAuthService(userQuery);
       },
       inject: [IUserQueryRepository, IUserCommandRepository],
     },
@@ -109,7 +109,7 @@ import * as handlers from './application';
     services.UserQueryFindOneByIdService,
     services.UserCreateService,
     services.UserUpdateFailedAttemptsByIdService,
-    services.UserLoginService,
+    services.UserAuthService,
     services.UserUpdateConfirmService,
   ],
 })

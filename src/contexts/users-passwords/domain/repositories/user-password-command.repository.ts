@@ -22,5 +22,5 @@ export abstract class IUserPasswordCommandRepository {
    * @param {UserId} userId
    * @returns {Promise<void>}
    */
-  abstract disableCreatedPasswordsByUserId(userId: UserId): Promise<void>;
+  abstract disablePasswordsByUserId(userId: UserId): Promise<void>;
 }

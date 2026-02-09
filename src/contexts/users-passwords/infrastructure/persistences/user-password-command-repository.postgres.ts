@@ -24,7 +24,7 @@ export class UserPasswordCommandRepositoryPostgres implements IUserPasswordComma
    * @returns {Promise<UserPassword>}
    */
   async create(userPassword: UserPassword): Promise<UserPassword> {
-    await this._prisma.userPasswords.create({
+    await this._prisma.userPassword.create({
       data: {
         id: userPassword._id._value,
         userId: userPassword._idUser._value,
@@ -46,12 +46,9 @@ export class UserPasswordCommandRepositoryPostgres implements IUserPasswordComma
    * @param {UserId} userId
    * @returns {Promise<void>}
    */
-  async disableCreatedPasswordsByUserId(userId: UserId): Promise<void> {
-    const existingPassword = await this._prisma.userPasswords.findFirst({ where: { userId: userId._value, isCurrent: true } });
-    if (!existingPassword) return;
-
+  async disablePasswordsByUserId(userId: UserId): Promise<void> {
     // TODO: Update password isCurrent to false
-    await this._prisma.userPasswords.update({
+    await this._prisma.userPassword.updateMany({
       where: { userId: userId._value, isCurrent: true },
       data: { isCurrent: false },
     });

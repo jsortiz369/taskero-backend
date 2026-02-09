@@ -9,6 +9,6 @@ export class TokenExpiredException extends GoneException {
    * @constructor
    */
   constructor() {
-    super('El token ha expirado.');
+    super('El código de verificación ha expirado. Solicita uno nuevo.');
   }
 }

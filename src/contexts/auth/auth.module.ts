@@ -4,11 +4,16 @@ import { BcryptModule } from 'src/shared/bcrypt/bcrypt.module';
 import { UsersModule } from '../users/users.module';
 import { UsersPasswordsModule } from '../users-passwords/users-passwords.module';
 import { UsersTokensModule } from '../users-tokens/users-tokens.module';
-import { UserPasswordByIdUserService } from '../users-passwords/domain/services';
+import { UserPasswordByIdUserService, UserPasswordCreateService } from '../users-passwords/domain/services';
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
 import { ISendEmailBullmqRepository } from 'src/shared/bullmq/domain/repositories/send-email.repository';
-import { UserTokenCompareService, UserTokenCreateService } from '../users-tokens/domain/services';
+import {
+  UserTokenCompareService,
+  UserTokenCreateService,
+  UserTokenUpdateUsedService,
+  UserTokenValidateTokenService,
+} from '../users-tokens/domain/services';
 import * as servicesUser from '../users/domain/services';
 import * as controllers from './infrastructure/http/controllers';
 import * as handlers from './application';
@@ -45,7 +50,7 @@ import * as handlers from './application';
     {
       provide: handlers.AuthLoginHandler,
       useFactory: (
-        userLogin: servicesUser.UserLoginService,
+        userLogin: servicesUser.UserAuthService,
         userPassword: UserPasswordByIdUserService,
         userUpdateFailedAttempts: servicesUser.UserUpdateFailedAttemptsByIdService,
         IBcryptRepository: IBcryptRepository,
@@ -63,7 +68,7 @@ import * as handlers from './application';
           ISendEmailBullmqRepository,
         ),
       inject: [
-        servicesUser.UserLoginService,
+        servicesUser.UserAuthService,
         UserPasswordByIdUserService,
         servicesUser.UserUpdateFailedAttemptsByIdService,
         IBcryptRepository,
@@ -79,8 +84,15 @@ import * as handlers from './application';
         userTokenCompare: UserTokenCompareService,
         userUpdateConfirm: servicesUser.UserUpdateConfirmService,
         jwtRepository: IJwtRepository,
-      ) => new handlers.AuthConfirmHandler(userById, userTokenCompare, userUpdateConfirm, jwtRepository),
-      inject: [servicesUser.UserQueryFindOneByIdService, UserTokenCompareService, servicesUser.UserUpdateConfirmService, IJwtRepository],
+        updateTokenUsed: UserTokenUpdateUsedService,
+      ) => new handlers.AuthConfirmHandler(userById, userTokenCompare, userUpdateConfirm, jwtRepository, updateTokenUsed),
+      inject: [
+        servicesUser.UserQueryFindOneByIdService,
+        UserTokenCompareService,
+        servicesUser.UserUpdateConfirmService,
+        IJwtRepository,
+        UserTokenUpdateUsedService,
+      ],
     },
 
     {
@@ -91,6 +103,18 @@ import * as handlers from './application';
         sendEmailQueue: ISendEmailBullmqRepository,
       ) => new handlers.AuthResendConfirmationTokenHandler(userById, userTokenCreate, sendEmailQueue),
       inject: [servicesUser.UserQueryFindOneByIdService, UserTokenCreateService, ISendEmailBullmqRepository],
+    },
+    {
+      provide: handlers.AuthRecoverPasswordHandler,
+      useFactory: (userAuth: servicesUser.UserAuthService, userTokenCreate: UserTokenCreateService, sendEmailQueue: ISendEmailBullmqRepository) =>
+        new handlers.AuthRecoverPasswordHandler(userAuth, userTokenCreate, sendEmailQueue),
+      inject: [servicesUser.UserAuthService, UserTokenCreateService, ISendEmailBullmqRepository],
+    },
+    {
+      provide: handlers.AuthResetPasswordHandler,
+      useFactory: (userToken: UserTokenValidateTokenService, userPassword: UserPasswordCreateService, updateTokenUsed: UserTokenUpdateUsedService) =>
+        new handlers.AuthResetPasswordHandler(userToken, userPassword, updateTokenUsed),
+      inject: [UserTokenValidateTokenService, UserPasswordCreateService, UserTokenUpdateUsedService],
     },
   ],
 })

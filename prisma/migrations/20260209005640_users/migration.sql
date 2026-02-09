@@ -22,6 +22,7 @@ CREATE TABLE "system"."users_tokens" (
     "type" "system"."UserTokenEnum" DEFAULT 'CONFIRM_ACCOUNT',
     "token" VARCHAR(255) NOT NULL,
     "expires_at" TIMESTAMP NOT NULL DEFAULT now(),
+    "used" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "users_tokens_pkey" PRIMARY KEY ("_id")
 );
@@ -45,9 +46,6 @@ CREATE TABLE "system"."users" (
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("_id")
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "users_passwords_user_id_key" ON "system"."users_passwords"("user_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_username_key" ON "system"."users"("username");

@@ -9,11 +9,10 @@ export class BcryptRepository implements IBcryptRepository {
    * @author Jogan Ortiz Muñoz
    *
    * @param {string} password
-   * @param {?(string | number)} [saltOrRounds]
    * @returns {Promise<string>}
    */
-  hash(password: string, saltOrRounds?: string | number): Promise<string> {
-    saltOrRounds = !saltOrRounds ? bcrypt.genSaltSync(10) : saltOrRounds;
+  hash(password: string): Promise<string> {
+    const saltOrRounds = bcrypt.genSaltSync(12);
     return bcrypt.hash(password, saltOrRounds);
   }
 
@@ -28,16 +27,5 @@ export class BcryptRepository implements IBcryptRepository {
    */
   compare(password: string, hash: string): Promise<boolean> {
     return bcrypt.compare(password, hash);
-  }
-
-  /**
-   * @description Generate salt by encrypt password
-   * @date 2025-12-22 07:50:05
-   * @author Jogan Ortiz Muñoz
-   *
-   * @returns {string}
-   */
-  generateSalt(): string {
-    return bcrypt.genSaltSync(10);
   }
 }

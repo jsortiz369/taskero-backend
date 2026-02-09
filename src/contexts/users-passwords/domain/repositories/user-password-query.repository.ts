@@ -1,5 +1,5 @@
 import { Nullable } from 'src/shared/system/domain/system.interface';
-import { UserPasswordCurrentByIdUserProjection } from '../projections/user-password-current-by-id-user.projection';
+import { UserPasswordCurrentByIdUserProjection, UserPasswordFindAllByIdUserProjection } from '../projections';
 
 export abstract class IUserPasswordQueryRepository {
   /**
@@ -12,4 +12,15 @@ export abstract class IUserPasswordQueryRepository {
    * @returns {Promise<Nullable<UserPasswordCurrentByIdUserProjection>>}
    */
   abstract findCurrentByIdUser(idUser: string): Promise<Nullable<UserPasswordCurrentByIdUserProjection>>;
+
+  /**
+   * @description Find all password by id user and limit
+   * @date 2026-02-08 17:44:59
+   * @author Jogan Ortiz Muñoz
+   *
+   * @abstract
+   * @param {string} idUser
+   * @returns {Promise<UserPasswordFindAllByIdUserProjection[]>}
+   */
+  abstract findAllByIdUser(idUser: string, limit: number): Promise<UserPasswordFindAllByIdUserProjection[]>;
 }

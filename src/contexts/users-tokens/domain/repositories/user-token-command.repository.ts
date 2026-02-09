@@ -1,4 +1,5 @@
 import { UserToken } from '../user-token';
+import { UserTokenId } from '../vo';
 
 export abstract class IUserTokenCommandRepository {
   /**
@@ -11,4 +12,15 @@ export abstract class IUserTokenCommandRepository {
    * @returns {Promise<UserToken>}
    */
   abstract create(data: UserToken): Promise<UserToken>;
+
+  /**
+   * @description Update token to used
+   * @date 2026-02-08 20:36:50
+   * @author Jogan Ortiz Muñoz
+   *
+   * @abstract
+   * @param {string} userTokenId
+   * @returns {Promise<void>}
+   */
+  abstract updateToUsed(userTokenId: UserTokenId): Promise<void>;
 }

@@ -25,9 +25,13 @@ import * as services from './domain/services';
     },
     {
       provide: services.UserPasswordCreateService,
-      useFactory: (uuid: ICryptoRepository, bcrypt: IBcryptRepository, userCommand: IUserPasswordCommandRepository) =>
-        new services.UserPasswordCreateService(uuid, bcrypt, userCommand),
-      inject: [ICryptoRepository, IBcryptRepository, IUserPasswordCommandRepository],
+      useFactory: (
+        uuid: ICryptoRepository,
+        bcrypt: IBcryptRepository,
+        userQuery: IUserPasswordQueryRepository,
+        userCommand: IUserPasswordCommandRepository,
+      ) => new services.UserPasswordCreateService(uuid, bcrypt, userQuery, userCommand),
+      inject: [ICryptoRepository, IBcryptRepository, IUserPasswordQueryRepository, IUserPasswordCommandRepository],
     },
     {
       provide: services.UserPasswordByIdUserService,

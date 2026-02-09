@@ -1,8 +1,9 @@
-import { $Enums } from 'generated/prisma';
+import { UserTokenEnum } from 'generated/prisma';
 
 import { PrismaRepository } from 'src/shared/database/infrastructure/persistences';
 import { UserToken } from '../../domain/user-token';
 import { IUserTokenCommandRepository } from '../../domain/repositories';
+import { UserTokenId } from '../../domain/vo';
 
 export class UserTokenCommandRepositoryPostgres implements IUserTokenCommandRepository {
   /**
@@ -25,10 +26,10 @@ export class UserTokenCommandRepositoryPostgres implements IUserTokenCommandRepo
    * @returns {Promise<UserToken>}
    */
   async create(userToken: UserToken): Promise<UserToken> {
-    await this._prisma.userTokens.create({
+    await this._prisma.userToken.create({
       data: {
         id: userToken._id._value,
-        type: $Enums.UserTokenEnum[userToken.typeValue],
+        type: UserTokenEnum[userToken.typeValue],
         token: userToken.token,
         userId: userToken._idUser._value,
         expiresAt: userToken.expiresAtValue,
@@ -36,5 +37,21 @@ export class UserTokenCommandRepositoryPostgres implements IUserTokenCommandRepo
     });
 
     return userToken;
+  }
+
+  /**
+   * @description Update token to used
+   * @date 2026-02-08 20:37:47
+   * @author Jogan Ortiz Muñoz
+   *
+   * @async
+   * @param {UserTokenId} userTokenId
+   * @returns {Promise<void>}
+   */
+  async updateToUsed(userTokenId: UserTokenId): Promise<void> {
+    await this._prisma.userToken.update({
+      where: { id: userTokenId._value },
+      data: { used: true },
+    });
   }
 }

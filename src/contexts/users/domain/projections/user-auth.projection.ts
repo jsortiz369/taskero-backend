@@ -2,10 +2,10 @@ import { UserPrimitive } from '../user.interface';
 
 type TypeProjection = Omit<UserPrimitive, 'deletedAt'>;
 
-export class UserLoginProjection {
+export class UserAuthProjection {
   /**
-   * Creates an instance of UserLoginProjection.
-   * @date 2026-01-17 17:21:46
+   * Creates an instance of UserAuthProjection.
+   * @date 2026-02-08 14:02:37
    * @author Jogan Ortiz Muñoz
    *
    * @constructor

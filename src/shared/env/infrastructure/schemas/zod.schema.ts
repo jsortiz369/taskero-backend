@@ -25,6 +25,9 @@ export const ZodEnvSchema: z.ZodType<Env> = z.object({
     validateStringArray,
     z.array(z.url({ message: 'CORS_ORIGIN must be a valid URL' }), { error: 'CORS_ORIGIN must by an array of valid URLs' }),
   ),
+  APP_URL: z.url({ message: 'APP_URL must be a valid URL' }).nonempty({ message: 'APP_URL is no empty' }).nonoptional({
+    message: 'APP_URL is required',
+  }),
   DB_HOST: z.string({ error: 'DB_HOST must be a string' }).nonempty({ message: 'DB_HOST is no empty' }).nonoptional({
     message: 'DB_HOST is required',
   }),

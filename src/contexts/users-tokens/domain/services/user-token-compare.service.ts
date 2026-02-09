@@ -1,7 +1,7 @@
-import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 import { NoTokenExistsException, TokenExpiredException, TokenNotEqualException } from '../exceptions';
-import { IUserTokenQueryRepository } from '../repositories/user-token-query.repository';
+import { IUserTokenQueryRepository } from '../repositories';
 import { UserTokenTypes } from '../user-token.interface';
+import { ICryptoRepository } from 'src/shared/crypto/domain/crypto.repository';
 
 export class UserTokenCompareService {
   /**
@@ -10,26 +10,26 @@ export class UserTokenCompareService {
    * @author Jogan Ortiz Muñoz
    *
    * @constructor
+   * @param {ICryptoRepository} _cryptoRepository
    * @param {IUserTokenQueryRepository} _userTokenRepository
-   * @param {IBcryptRepository} _bcryptRepository
    */
   constructor(
+    private readonly _cryptoRepository: ICryptoRepository,
     private readonly _userTokenRepository: IUserTokenQueryRepository,
-    private readonly _bcryptRepository: IBcryptRepository,
   ) {}
 
-  async execute(idUser: string, token: string, type: UserTokenTypes): Promise<void> {
+  async execute(idUser: string, token: string, type: UserTokenTypes) {
     const result = await this._userTokenRepository.findCurrentByIdUser(idUser, type);
     if (!result) throw new NoTokenExistsException();
 
-    // TODO: validate token
-    const isTokenValid = await this._bcryptRepository.compare(token, result.token);
-    if (!isTokenValid) throw new TokenNotEqualException();
+    // TODO: validate token equals
+    const tokenHash = this._cryptoRepository.hash(token);
+    if (result.token !== tokenHash) throw new TokenNotEqualException();
 
     // TODO: validate token not expired
     const now = new Date();
     if (result.expiresAt < now) throw new TokenExpiredException();
 
-    return;
+    return result;
   }
 }
