@@ -38,6 +38,11 @@ import * as handlers from './application';
       inject: [servicesUser.UserConflictPhoneService],
     },
     {
+      provide: handlers.AuthVerifyTokenResetPasswordHandler,
+      useFactory: (userTokenValidateToken: UserTokenValidateTokenService) => new handlers.AuthVerifyTokenResetPasswordHandler(userTokenValidateToken),
+      inject: [UserTokenValidateTokenService],
+    },
+    {
       provide: handlers.AuthRegisterHandler,
       useFactory: (
         userCreate: servicesUser.UserCreateService,

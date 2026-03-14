@@ -40,8 +40,8 @@ export class EmailsRepository implements IEmailsRepository {
    * @returns {Promise<string|null>}
    */
   async sendEmail(data: DataSendEmail): Promise<string | null> {
-    let from = this._envRepository.get('SMTP_USERNAME');
-    if (data.titleFrom) from = `${data.titleFrom} <${from}>`;
+    const titleFrom = data.titleFrom ?? 'Taskero';
+    const from = `${titleFrom} <${this._envRepository.get('SMTP_USERNAME')}>`;
 
     const info = await this._transporter.sendMail({
       from,

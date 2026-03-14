@@ -1,6 +1,7 @@
 export * from './queries/auth-register-conflict-username';
 export * from './queries/auth-register-conflict-email';
 export * from './queries/auth-register-conflict-phone';
+export * from './queries/auth-verify-token-reset-password';
 export * from './commands/auth-register';
 export * from './commands/auth-login';
 export * from './commands/auth-confirm';

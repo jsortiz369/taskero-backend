@@ -21,7 +21,7 @@ export class AuthResendConfirmationTokenHandler {
     private readonly _sendEmailQueue: ISendEmailBullmqRepository,
   ) {}
 
-  async execute(command: AuthResendConfirmationTokenCommand): Promise<{ success: boolean }> {
+  async execute(command: AuthResendConfirmationTokenCommand): Promise<{ success: true }> {
     // TODO: valdate exists user by id
     const user = await this._userQueryFindOneByIdService.execute(command.idUser);
 
