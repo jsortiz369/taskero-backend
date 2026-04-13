@@ -14,8 +14,8 @@ model User {
     updatedAt       DateTime    @db.Timestamp(3) @updatedAt @map("updated_at")
     deletedAt       DateTime?   @db.Timestamp(3) @map("deleted_at")
 
-    tokens      UserToken[]
-    passwords   UserPassword[]
+    passwords       UserPassword[]
+    userSessions    UserSession[]
     @@map("users")
     @@schema("system")
 }

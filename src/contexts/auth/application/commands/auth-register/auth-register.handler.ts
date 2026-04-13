@@ -1,8 +1,9 @@
 import { UserCreateService } from 'src/contexts/users/domain/services';
 import { AuthRegisterCommand } from './auth-register.command';
 import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
-import { UserTokenCreateService } from 'src/contexts/users-tokens/domain/services';
 import { ISendEmailBullmqRepository } from 'src/shared/bullmq/domain/repositories/send-email.repository';
+import { ICacheRepository } from 'src/shared/cache/domain/cache.repository';
+import { ICryptoRepository } from 'src/shared/crypto/domain/crypto.repository';
 
 export class AuthRegisterHandler {
   /**
@@ -13,13 +14,15 @@ export class AuthRegisterHandler {
    * @constructor
    * @param {UserCreateService} _userCreate
    * @param {IJwtRepository} _jwtRepository
-   * @param {UserTokenCreateService} _userTokenCreateService
+   * @param {ICryptoRepository} _cryptoRepository
+   * @param {ICacheRepository} _cacheRepository
    * @param {ISendEmailBullmqRepository} _sendEmailQueue
    */
   constructor(
     private readonly _userCreate: UserCreateService,
     private readonly _jwtRepository: IJwtRepository,
-    private readonly _userTokenCreateService: UserTokenCreateService,
+    private readonly _cryptoRepository: ICryptoRepository,
+    private readonly _cacheRepository: ICacheRepository,
     private readonly _sendEmailQueue: ISendEmailBullmqRepository,
   ) {}
 
@@ -29,7 +32,9 @@ export class AuthRegisterHandler {
     const userPrimitive = result.toValuesPrimitives();
 
     // TODO: create token to confirm account
-    const token = await this._userTokenCreateService.execute(userPrimitive._id, 'CONFIRM_ACCOUNT');
+    const token = this._cryptoRepository.token({ kind: 'NUMBER' });
+    const tokenHash = this._cryptoRepository.hash(token);
+    await this._cacheRepository.set(`confirm-account:${userPrimitive._id}`, tokenHash, 600 * 1500); // expire in 15 minutes
     await this._sendEmailQueue.addJobConfirmAccount({ email: userPrimitive.email, code: token });
 
     // TODO: create token confirmed account

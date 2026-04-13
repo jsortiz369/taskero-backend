@@ -1,8 +1,9 @@
 import { UserQueryFindOneByIdService, UserUpdateConfirmService } from 'src/contexts/users/domain/services';
 import { AuthConfirmCommand } from './auth-confirm.command';
-import { AccountAlreadyConfirmedException } from 'src/contexts/auth/domain/exceptions';
-import { UserTokenCompareService, UserTokenUpdateUsedService } from 'src/contexts/users-tokens/domain/services';
+import { AccountAlreadyConfirmedException, NoTokenExistsException, TokenNotEqualException } from 'src/contexts/auth/domain/exceptions';
 import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
+import { ICryptoRepository } from 'src/shared/crypto/domain/crypto.repository';
+import { ICacheRepository } from 'src/shared/cache/domain/cache.repository';
 
 export class AuthConfirmHandler {
   /**
@@ -12,16 +13,17 @@ export class AuthConfirmHandler {
    *
    * @constructor
    * @param {UserQueryFindOneByIdService} _userQueryFindOneByIdService
-   * @param {UserTokenCompareService} _userTokenCompareService
+   * @param {ICryptoRepository} _cryptoRepository
+   * @param {ICacheRepository} _cacheRepository
    * @param {UserUpdateConfirmService} _userUpdateConfirmService
    * @param {IJwtRepository} _jwtRepository
    */
   constructor(
     private readonly _userQueryFindOneByIdService: UserQueryFindOneByIdService,
-    private readonly _userTokenCompareService: UserTokenCompareService,
+    private readonly _cryptoRepository: ICryptoRepository,
+    private readonly _cacheRepository: ICacheRepository,
     private readonly _userUpdateConfirmService: UserUpdateConfirmService,
     private readonly _jwtRepository: IJwtRepository,
-    private readonly _updatedUsedTokenService: UserTokenUpdateUsedService,
   ) {}
 
   async execute(command: AuthConfirmCommand) {
@@ -32,13 +34,20 @@ export class AuthConfirmHandler {
     if (user.confirmed) throw new AccountAlreadyConfirmedException();
 
     // TODO: validate token exists by user id and compare token
-    const resultToken = await this._userTokenCompareService.execute(command.idUser, command.otp, 'CONFIRM_ACCOUNT');
+    const tokenHash = this._cryptoRepository.hash(command.otp);
+    const tokenComparison = await this._cacheRepository.get<string>(`confirm-account:${command.idUser}`);
+
+    // TODO: validate tokeen exists
+    if (!tokenComparison) throw new NoTokenExistsException();
+
+    // TODO: validate token equals
+    if (tokenHash !== tokenComparison) throw new TokenNotEqualException();
 
     // TODO: confirm account
     await this._userUpdateConfirmService.execute(command.idUser);
 
-    // TODO: update token used
-    await this._updatedUsedTokenService.execute(resultToken._id);
+    // TODO: delete token
+    await this._cacheRepository.delete(`confirm-account:${command.idUser}`);
 
     // TODO: generate tokens
     const payload = { username: user.username, sub: user._id };

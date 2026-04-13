@@ -1,25 +1,21 @@
 import { Module } from '@nestjs/common';
 
 import { BcryptModule } from 'src/shared/bcrypt/bcrypt.module';
+import { CryptoModule } from 'src/shared/crypto/crypto.module';
 import { UsersModule } from '../users/users.module';
 import { UsersPasswordsModule } from '../users-passwords/users-passwords.module';
-import { UsersTokensModule } from '../users-tokens/users-tokens.module';
 import { UserPasswordByIdUserService, UserPasswordCreateService } from '../users-passwords/domain/services';
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
 import { ISendEmailBullmqRepository } from 'src/shared/bullmq/domain/repositories/send-email.repository';
-import {
-  UserTokenCompareService,
-  UserTokenCreateService,
-  UserTokenUpdateUsedService,
-  UserTokenValidateTokenService,
-} from '../users-tokens/domain/services';
+import { ICacheRepository } from 'src/shared/cache/domain/cache.repository';
+import { ICryptoRepository } from 'src/shared/crypto/domain/crypto.repository';
 import * as servicesUser from '../users/domain/services';
 import * as controllers from './infrastructure/http/controllers';
 import * as handlers from './application';
 
 @Module({
-  imports: [BcryptModule, UsersModule, UsersPasswordsModule, UsersTokensModule],
+  imports: [BcryptModule, CryptoModule, UsersModule, UsersPasswordsModule],
   controllers: [controllers.AuthController],
   providers: [
     {
@@ -39,18 +35,20 @@ import * as handlers from './application';
     },
     {
       provide: handlers.AuthVerifyTokenResetPasswordHandler,
-      useFactory: (userTokenValidateToken: UserTokenValidateTokenService) => new handlers.AuthVerifyTokenResetPasswordHandler(userTokenValidateToken),
-      inject: [UserTokenValidateTokenService],
+      useFactory: (cryptoRepository: ICryptoRepository, cacheRepository: ICacheRepository) =>
+        new handlers.AuthVerifyTokenResetPasswordHandler(cryptoRepository, cacheRepository),
+      inject: [ICryptoRepository, ICacheRepository],
     },
     {
       provide: handlers.AuthRegisterHandler,
       useFactory: (
         userCreate: servicesUser.UserCreateService,
         IJwtRepository: IJwtRepository,
-        userTokenCreateService: UserTokenCreateService,
+        cryptoRepository: ICryptoRepository,
+        cacheRepository: ICacheRepository,
         sendEmailQueue: ISendEmailBullmqRepository,
-      ) => new handlers.AuthRegisterHandler(userCreate, IJwtRepository, userTokenCreateService, sendEmailQueue),
-      inject: [servicesUser.UserCreateService, IJwtRepository, UserTokenCreateService, ISendEmailBullmqRepository],
+      ) => new handlers.AuthRegisterHandler(userCreate, IJwtRepository, cryptoRepository, cacheRepository, sendEmailQueue),
+      inject: [servicesUser.UserCreateService, IJwtRepository, ICryptoRepository, ICacheRepository, ISendEmailBullmqRepository],
     },
     {
       provide: handlers.AuthLoginHandler,
@@ -60,7 +58,8 @@ import * as handlers from './application';
         userUpdateFailedAttempts: servicesUser.UserUpdateFailedAttemptsByIdService,
         IBcryptRepository: IBcryptRepository,
         IJwtRepository: IJwtRepository,
-        UserTokenCreateService: UserTokenCreateService,
+        cryptoRepository: ICryptoRepository,
+        cacheRepository: ICacheRepository,
         ISendEmailBullmqRepository: ISendEmailBullmqRepository,
       ) =>
         new handlers.AuthLoginHandler(
@@ -69,7 +68,8 @@ import * as handlers from './application';
           userUpdateFailedAttempts,
           IBcryptRepository,
           IJwtRepository,
-          UserTokenCreateService,
+          cryptoRepository,
+          cacheRepository,
           ISendEmailBullmqRepository,
         ),
       inject: [
@@ -78,7 +78,8 @@ import * as handlers from './application';
         servicesUser.UserUpdateFailedAttemptsByIdService,
         IBcryptRepository,
         IJwtRepository,
-        UserTokenCreateService,
+        ICryptoRepository,
+        ICacheRepository,
         ISendEmailBullmqRepository,
       ],
     },
@@ -86,40 +87,39 @@ import * as handlers from './application';
       provide: handlers.AuthConfirmHandler,
       useFactory: (
         userById: servicesUser.UserQueryFindOneByIdService,
-        userTokenCompare: UserTokenCompareService,
+        cryptoRepository: ICryptoRepository,
+        cacheRepository: ICacheRepository,
         userUpdateConfirm: servicesUser.UserUpdateConfirmService,
         jwtRepository: IJwtRepository,
-        updateTokenUsed: UserTokenUpdateUsedService,
-      ) => new handlers.AuthConfirmHandler(userById, userTokenCompare, userUpdateConfirm, jwtRepository, updateTokenUsed),
-      inject: [
-        servicesUser.UserQueryFindOneByIdService,
-        UserTokenCompareService,
-        servicesUser.UserUpdateConfirmService,
-        IJwtRepository,
-        UserTokenUpdateUsedService,
-      ],
+      ) => new handlers.AuthConfirmHandler(userById, cryptoRepository, cacheRepository, userUpdateConfirm, jwtRepository),
+      inject: [servicesUser.UserQueryFindOneByIdService, ICryptoRepository, ICacheRepository, servicesUser.UserUpdateConfirmService, IJwtRepository],
     },
 
     {
       provide: handlers.AuthResendConfirmationTokenHandler,
       useFactory: (
         userById: servicesUser.UserQueryFindOneByIdService,
-        userTokenCreate: UserTokenCreateService,
+        cryptoRepository: ICryptoRepository,
+        cacheRepository: ICacheRepository,
         sendEmailQueue: ISendEmailBullmqRepository,
-      ) => new handlers.AuthResendConfirmationTokenHandler(userById, userTokenCreate, sendEmailQueue),
-      inject: [servicesUser.UserQueryFindOneByIdService, UserTokenCreateService, ISendEmailBullmqRepository],
+      ) => new handlers.AuthResendConfirmationTokenHandler(userById, cryptoRepository, cacheRepository, sendEmailQueue),
+      inject: [servicesUser.UserQueryFindOneByIdService, ICryptoRepository, ICacheRepository, ISendEmailBullmqRepository],
     },
     {
       provide: handlers.AuthRecoverPasswordHandler,
-      useFactory: (userAuth: servicesUser.UserAuthService, userTokenCreate: UserTokenCreateService, sendEmailQueue: ISendEmailBullmqRepository) =>
-        new handlers.AuthRecoverPasswordHandler(userAuth, userTokenCreate, sendEmailQueue),
-      inject: [servicesUser.UserAuthService, UserTokenCreateService, ISendEmailBullmqRepository],
+      useFactory: (
+        userAuth: servicesUser.UserAuthService,
+        cryptoRepository: ICryptoRepository,
+        cacheRepository: ICacheRepository,
+        sendEmailQueue: ISendEmailBullmqRepository,
+      ) => new handlers.AuthRecoverPasswordHandler(userAuth, cryptoRepository, cacheRepository, sendEmailQueue),
+      inject: [servicesUser.UserAuthService, ICryptoRepository, ICacheRepository, ISendEmailBullmqRepository],
     },
     {
       provide: handlers.AuthResetPasswordHandler,
-      useFactory: (userToken: UserTokenValidateTokenService, userPassword: UserPasswordCreateService, updateTokenUsed: UserTokenUpdateUsedService) =>
-        new handlers.AuthResetPasswordHandler(userToken, userPassword, updateTokenUsed),
-      inject: [UserTokenValidateTokenService, UserPasswordCreateService, UserTokenUpdateUsedService],
+      useFactory: (cryptoRepository: ICryptoRepository, cacheRepository: ICacheRepository, userPassword: UserPasswordCreateService) =>
+        new handlers.AuthResetPasswordHandler(cryptoRepository, cacheRepository, userPassword),
+      inject: [ICryptoRepository, ICacheRepository, UserPasswordCreateService],
     },
   ],
 })

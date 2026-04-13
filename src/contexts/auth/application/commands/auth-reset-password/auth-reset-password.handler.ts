@@ -1,6 +1,8 @@
-import { UserTokenUpdateUsedService, UserTokenValidateTokenService } from 'src/contexts/users-tokens/domain/services';
 import { AuthResetPasswordCommand } from './auth-reset-password.command';
 import { UserPasswordCreateService } from 'src/contexts/users-passwords/domain/services';
+import { ICryptoRepository } from 'src/shared/crypto/domain/crypto.repository';
+import { ICacheRepository } from 'src/shared/cache/domain/cache.repository';
+import { NoTokenExistsException } from 'src/contexts/auth/domain/exceptions';
 
 export class AuthResetPasswordHandler {
   /**
@@ -9,25 +11,29 @@ export class AuthResetPasswordHandler {
    * @author Jogan Ortiz Muñoz
    *
    * @constructor
-   * @param {UserTokenValidateTokenService} _userTokenValidateTokenService
+   * @param {ICryptoRepository} _cryptoRepository
+   * @param {ICacheRepository} _cacheRepository
    * @param {UserPasswordCreateService} _passwordCreate
-   * @param {UserTokenUpdateUsedService} _updatedUsedTokenService
    */
   constructor(
-    private readonly _userTokenValidateTokenService: UserTokenValidateTokenService,
+    private readonly _cryptoRepository: ICryptoRepository,
+    private readonly _cacheRepository: ICacheRepository,
     private readonly _passwordCreate: UserPasswordCreateService,
-    private readonly _updatedUsedTokenService: UserTokenUpdateUsedService,
   ) {}
 
   async execute(command: AuthResetPasswordCommand): Promise<{ success: true }> {
     // TODO: validate token
-    const result = await this._userTokenValidateTokenService.execute(command.token, 'RESET_PASSWORD');
+    const tokenHash = this._cryptoRepository.hash(command.token);
+    const idUser = await this._cacheRepository.get<string>(`reset-password:${tokenHash}`);
+
+    // TODO: validate tokeen exists
+    if (!idUser) throw new NoTokenExistsException();
+
+    // TODO: delete token
+    await this._cacheRepository.delete(`reset-password:${tokenHash}`);
 
     // TODO: create password
-    await this._passwordCreate.execute(result._idUser, command.password);
-
-    // TODO: update token used
-    await this._updatedUsedTokenService.execute(result._id);
+    await this._passwordCreate.execute(idUser, command.password);
 
     // TODO: if everything is ok
     return { success: true };

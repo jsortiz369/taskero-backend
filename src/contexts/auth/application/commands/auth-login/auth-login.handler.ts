@@ -3,8 +3,9 @@ import { AuthLoginCommand } from './auth-login.command';
 import { UserPasswordByIdUserService } from 'src/contexts/users-passwords/domain/services';
 import { IBcryptRepository } from 'src/shared/bcrypt/domain/bcrypt.repository';
 import { IJwtRepository } from 'src/shared/jwt/domain/jwt.repository';
+import { ICacheRepository } from 'src/shared/cache/domain/cache.repository';
+import { ICryptoRepository } from 'src/shared/crypto/domain/crypto.repository';
 import { ISendEmailBullmqRepository } from 'src/shared/bullmq/domain/repositories/send-email.repository';
-import { UserTokenCreateService } from 'src/contexts/users-tokens/domain/services';
 import * as E from 'src/contexts/auth/domain/exceptions';
 
 export class AuthLoginHandler {
@@ -18,8 +19,10 @@ export class AuthLoginHandler {
    * @param {UserPasswordByIdUserService} _userPasswordByIdUserService
    * @param {UserUpdateFailedAttemptsByIdService} _userUpdateFailedAttemptsService
    * @param {IBcryptRepository} _bycryptRepository
-   * @param {UserTokenCreateService} _userTokenCreateService
    * @param {IJwtRepository} _jwtRepository
+   * @param {ICryptoRepository} _cryptoRepository
+   * @param {ICacheRepository} _cacheRepository
+   * @param {ISendEmailBullmqRepository} _sendEmailQueue
    */
   constructor(
     private readonly _userAuthService: UserAuthService,
@@ -27,7 +30,8 @@ export class AuthLoginHandler {
     private readonly _userUpdateFailedAttemptsService: UserUpdateFailedAttemptsByIdService,
     private readonly _bycryptRepository: IBcryptRepository,
     private readonly _jwtRepository: IJwtRepository,
-    private readonly _userTokenCreateService: UserTokenCreateService,
+    private readonly _cryptoRepository: ICryptoRepository,
+    private readonly _cacheRepository: ICacheRepository,
     private readonly _sendEmailQueue: ISendEmailBullmqRepository,
   ) {}
 
@@ -65,7 +69,9 @@ export class AuthLoginHandler {
 
     // TODO: validate user confirmed
     if (!user.confirmed) {
-      const token = await this._userTokenCreateService.execute(user._id, 'CONFIRM_ACCOUNT');
+      const token = this._cryptoRepository.token({ kind: 'NUMBER' });
+      const tokenHash = this._cryptoRepository.hash(token);
+      await this._cacheRepository.set(`confirm-account:${user._id}`, tokenHash, 600 * 1500);
       await this._sendEmailQueue.addJobConfirmAccount({ email: user.email, code: token });
       return { tokenConfirm: this._jwtRepository.generateConfirmAccount({ sub: user._id }) };
     }
@@ -75,9 +81,13 @@ export class AuthLoginHandler {
     const token = this._jwtRepository.generate(payload);
     const tokenRefresh = this._jwtRepository.generateRefresh(payload);
 
+    // TODO: insert session in database and cache
+
     return {
-      token: token,
-      tokenRefresh: tokenRefresh,
+      cookies: {
+        token: token,
+        tokenRefresh: tokenRefresh,
+      },
       data: {
         names: user.names,
         surnames: user.surnames,

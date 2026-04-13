@@ -16,7 +16,7 @@ export class ConfirmGuard implements CanActivate {
 
     try {
       const payload = this._jwtRepository.verifyConfirmAccount(jwt);
-      request['idUser'] = payload.sub;
+      request.idUser = payload.sub;
     } catch {
       throw new NotUnauthorizedException();
     }

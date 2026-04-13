@@ -1,9 +1,6 @@
 -- CreateSchema
 CREATE SCHEMA IF NOT EXISTS "system";
 
--- CreateEnum
-CREATE TYPE "system"."UserTokenEnum" AS ENUM ('CONFIRM_ACCOUNT', 'LOGIN_EXTRA', 'RESET_PASSWORD');
-
 -- CreateTable
 CREATE TABLE "system"."users_passwords" (
     "_id" UUID NOT NULL DEFAULT gen_random_uuid(),
@@ -16,15 +13,19 @@ CREATE TABLE "system"."users_passwords" (
 );
 
 -- CreateTable
-CREATE TABLE "system"."users_tokens" (
+CREATE TABLE "system"."users_sessions" (
     "_id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "user_id" UUID NOT NULL,
-    "type" "system"."UserTokenEnum" DEFAULT 'CONFIRM_ACCOUNT',
-    "token" VARCHAR(255) NOT NULL,
-    "expires_at" TIMESTAMP NOT NULL DEFAULT now(),
-    "used" BOOLEAN NOT NULL DEFAULT false,
+    "refresh_hash" VARCHAR(255) NOT NULL,
+    "ip_address" VARCHAR(45),
+    "user_agent" VARCHAR(255),
+    "device" VARCHAR(255),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "last_used_at" TIMESTAMP(3) NOT NULL,
+    "expires_at" TIMESTAMP(3),
+    "revoked_at" TIMESTAMP(3),
 
-    CONSTRAINT "users_tokens_pkey" PRIMARY KEY ("_id")
+    CONSTRAINT "users_sessions_pkey" PRIMARY KEY ("_id")
 );
 
 -- CreateTable
@@ -60,4 +61,4 @@ CREATE UNIQUE INDEX "users_email_key" ON "system"."users"("email");
 ALTER TABLE "system"."users_passwords" ADD CONSTRAINT "users_passwords_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "system"."users"("_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE "system"."users_tokens" ADD CONSTRAINT "users_tokens_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "system"."users"("_id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE "system"."users_sessions" ADD CONSTRAINT "users_sessions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "system"."users"("_id") ON DELETE RESTRICT ON UPDATE RESTRICT;

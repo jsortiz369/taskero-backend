@@ -3,9 +3,20 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import { ILoggerRepository } from '../../domain/logger.repository';
+import { IEnvRepository } from 'src/shared/env/domain/env.repository';
 
 export class LoggerRepositoryLogger implements ILoggerRepository {
   private readonly logger: Logger = new Logger();
+
+  /**
+   * Creates an instance of LoggerRepositoryLogger.
+   * @date 2026-04-12 21:04:59
+   * @author Jogan Ortiz Muñoz
+   *
+   * @constructor
+   * @param {IEnvRepository} _envRepository
+   */
+  constructor(private readonly _envRepository: IEnvRepository) {}
 
   /**
    * @description show the messages
@@ -66,12 +77,13 @@ export class LoggerRepositoryLogger implements ILoggerRepository {
    * @param {('error' | 'warn' | 'log')} [type='log']
    */
   private createFile(text: any, type: 'error' | 'warn' | 'log' = 'log') {
+    const nodeEnv = this._envRepository.get('NODE_ENV');
+    if (nodeEnv === 'production' && type !== 'error') return;
+
     const uploadPath = path.join(process.cwd(), 'logs');
 
     // validate exist folder
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
-    }
+    if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
 
     const date = new Date().toLocaleString().replaceAll('/', '-');
     const filePath = path.join(uploadPath, `${date.split(',')[0]}.log`);

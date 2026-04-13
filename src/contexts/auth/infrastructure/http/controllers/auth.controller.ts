@@ -1,5 +1,5 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, Req, UseGuards } from '@nestjs/common';
-import type { FastifyRequest } from 'fastify';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 
 import { ROUTES } from 'src/app/http/routes';
 import { ConfirmGuard } from 'src/shared/system/infrastructure/guards/confirm.guard';
@@ -17,6 +17,23 @@ import * as verifyTokenResetPassword from 'src/contexts/auth/application/queries
 
 @Controller(ROUTES.AUTH)
 export class AuthController {
+  /**
+   * Creates an instance of AuthController.
+   * @date 2026-04-12 22:00:09
+   * @author Jogan Ortiz Muñoz
+   *
+   * @constructor
+   * @param {checkUsername.AuthRegisterConflictUsernameHandler} _registerConflictUsernameHandler
+   * @param {checkEmail.AuthRegisterConflictEmailHandler} _registerConflictEmailExistHandler
+   * @param {checkPhone.AuthRegisterConflictPhoneHandler} _registerConflictPhoneExistHandler
+   * @param {register.AuthRegisterHandler} _registerHandler
+   * @param {login.AuthLoginHandler} _loginHandler
+   * @param {confirm.AuthConfirmHandler} _confirmHandler
+   * @param {resendConfirmationToken.AuthResendConfirmationTokenHandler} _resendConfirmationTokenHandler
+   * @param {recoverPassword.AuthRecoverPasswordHandler} _recoverPasswordHandler
+   * @param {resetPassword.AuthResetPasswordHandler} _resetPasswordHandler
+   * @param {verifyTokenResetPassword.AuthVerifyTokenResetPasswordHandler} _verifyTokenResetPasswordHandler
+   */
   constructor(
     private readonly _registerConflictUsernameHandler: checkUsername.AuthRegisterConflictUsernameHandler,
     private readonly _registerConflictEmailExistHandler: checkEmail.AuthRegisterConflictEmailHandler,
@@ -59,24 +76,43 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('/login')
-  async login(@Body() body: dto.AuthLoginDto) {
-    return await this._loginHandler.execute(new login.AuthLoginCommand(body.username, body.password));
+  async login(@Body() body: dto.AuthLoginDto, @Req() request: FastifyRequest, @Res({ passthrough: true }) response: FastifyReply) {
+    const ip = request.ip;
+
+    const dataAgent = request.userAgentData;
+    const result = await this._loginHandler.execute(
+      new login.AuthLoginCommand(
+        body.username,
+        body.password,
+        ip,
+        dataAgent?.browser || 'Postman',
+        dataAgent?.version,
+        dataAgent?.device,
+        dataAgent?.os,
+      ),
+    );
+
+    if (result.tokenConfirm) return result;
+
+    const accessToken = result.cookies!.token;
+    const refreshToken = result.cookies!.tokenRefresh;
+    response.setCookie('access_token', accessToken);
+    response.setCookie('refresh_token', refreshToken);
+    return { ...result.data };
   }
 
   @UseGuards(ConfirmGuard)
   @HttpCode(HttpStatus.OK)
   @Post('/confirm')
   async confirmAccount(@Body() body: dto.AuthConfirmDto, @Req() request: FastifyRequest) {
-    return await this._confirmHandler.execute(new confirm.AuthConfirmCommand(body.otp, request['idUser'] as string));
+    return await this._confirmHandler.execute(new confirm.AuthConfirmCommand(body.otp, request.idUser!));
   }
 
   @UseGuards(ConfirmGuard)
   @HttpCode(HttpStatus.OK)
   @Post('/resend-confirmation-token')
   async resendConfirmationToken(@Req() request: FastifyRequest) {
-    return await this._resendConfirmationTokenHandler.execute(
-      new resendConfirmationToken.AuthResendConfirmationTokenCommand(request['idUser'] as string),
-    );
+    return await this._resendConfirmationTokenHandler.execute(new resendConfirmationToken.AuthResendConfirmationTokenCommand(request.idUser!));
   }
 
   @HttpCode(HttpStatus.OK)

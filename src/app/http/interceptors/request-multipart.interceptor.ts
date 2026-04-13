@@ -1,14 +1,14 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { MultipartFile } from '@fastify/multipart';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import type { FastifyRequest } from 'fastify';
 
 import { ILoggerRepository } from 'src/shared/logger/domain/logger.repository';
 
 @Injectable()
-export class MultipartBodyInterceptor implements NestInterceptor {
+export class RequestMultipartInterceptor implements NestInterceptor {
   /**
-   * Creates an instance of MultipartBodyInterceptor.
+   * Creates an instance of RequestMultipartInterceptor.
    * @date 2025-12-26 06:55:44
    * @author Jogan Ortiz Muñoz
    *
@@ -17,22 +17,11 @@ export class MultipartBodyInterceptor implements NestInterceptor {
    */
   constructor(private readonly _logger: ILoggerRepository) {}
 
-  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
-    const now = Date.now();
+  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<CallHandler>> {
     const req = context.switchToHttp().getRequest<FastifyRequest>();
 
-    const nextHandle = next.handle().pipe(
-      tap(() => {
-        const res = context.switchToHttp().getResponse();
-        const statusCode = res.statusCode;
-        const duration = Date.now() - now;
-
-        this._logger.log(`${req.method} ${req.url} ${statusCode} ${duration}ms`);
-      }),
-    );
-
     // check if request is multipart
-    if (!req.isMultipart || !req.isMultipart()) return nextHandle;
+    if (!req.isMultipart || !req.isMultipart()) return next.handle();
 
     const files: MultipartFile[] = [];
     try {
@@ -52,6 +41,6 @@ export class MultipartBodyInterceptor implements NestInterceptor {
     (req as any).files = files;
     (req as any).file = files.length ? files[0] : undefined;
 
-    return nextHandle;
+    return next.handle();
   }
 }

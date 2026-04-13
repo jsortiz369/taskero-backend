@@ -28,6 +28,7 @@ export const ZodEnvSchema: z.ZodType<Env> = z.object({
   APP_URL: z.url({ message: 'APP_URL must be a valid URL' }).nonempty({ message: 'APP_URL is no empty' }).nonoptional({
     message: 'APP_URL is required',
   }),
+  SECRET_COOKIE: z.string({ error: 'SECRET_COOKIE must be a string' }).optional(),
   DB_HOST: z.string({ error: 'DB_HOST must be a string' }).nonempty({ message: 'DB_HOST is no empty' }).nonoptional({
     message: 'DB_HOST is required',
   }),
@@ -79,6 +80,9 @@ export const ZodEnvSchema: z.ZodType<Env> = z.object({
       .min(1000, { message: 'DB_PORT must be greater than 1000' })
       .max(65535, { message: 'DB_PORT must be less than 65535' }),
   ),
+  REDIS_PASSWORD: z.string({ error: 'REDIS_PASSWORD must be a string' }).nonoptional({
+    message: 'REDIS_PASSWORD is required',
+  }),
   SMTP_HOST: z.string({ error: 'SMTP_HOST must be a string' }).nonempty({ message: 'SMTP_HOST is no empty' }).nonoptional({
     message: 'SMTP_HOST is required',
   }),

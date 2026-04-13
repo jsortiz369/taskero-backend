@@ -39,6 +39,7 @@ export type Env = {
   NODE_ENV: 'development' | 'production' | 'test';
   CORS_ORIGIN: string | string[];
   APP_URL: string;
+  SECRET_COOKIE?: string;
   DB_HOST: string;
   DB_NAME: string;
   DB_USERNAME: string;
@@ -46,6 +47,7 @@ export type Env = {
   DB_PORT: number;
   REDIS_HOST: string;
   REDIS_PORT: number;
+  REDIS_PASSWORD?: string;
   JWT_SECRET: string;
   JWT_REFRESH_SECRET: string;
   JWT_CONFIRM_ACCOUNT: string;

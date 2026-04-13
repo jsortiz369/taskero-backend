@@ -18,5 +18,7 @@
     "titleBar.inactiveBackground": "#00b3e699",
     "titleBar.inactiveForeground": "#15202b99"
   },
-  "prisma.pinToPrisma6": false
+  "prisma.pinToPrisma6": false,
+  "snyk.advanced.organization": "2bcbb5fc-8bd6-4857-b473-960d9626f09e",
+  "snyk.advanced.autoSelectOrganization": true
 }

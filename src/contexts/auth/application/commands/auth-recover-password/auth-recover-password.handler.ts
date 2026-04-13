@@ -1,7 +1,8 @@
 import { UserAuthService } from 'src/contexts/users/domain/services';
 import { AuthRecoverPasswordCommand } from './auth-recover-password.command';
-import { UserTokenCreateService } from 'src/contexts/users-tokens/domain/services';
 import { ISendEmailBullmqRepository } from 'src/shared/bullmq/domain/repositories/send-email.repository';
+import { ICacheRepository } from 'src/shared/cache/domain/cache.repository';
+import { ICryptoRepository } from 'src/shared/crypto/domain/crypto.repository';
 
 export class AuthRecoverPasswordHandler {
   /**
@@ -11,12 +12,14 @@ export class AuthRecoverPasswordHandler {
    *
    * @constructor
    * @param {UserAuthService} _userAuthService
-   * @param {UserTokenCreateService} _userTokenCreateService
+   * @param {ICryptoRepository} _cryptoRepository
+   * @param {ICacheRepository} _cacheRepository
    * @param {ISendEmailBullmqRepository} _sendEmailQueue
    */
   constructor(
     private readonly _userAuthService: UserAuthService,
-    private readonly _userTokenCreateService: UserTokenCreateService,
+    private readonly _cryptoRepository: ICryptoRepository,
+    private readonly _cacheRepository: ICacheRepository,
     private readonly _sendEmailQueue: ISendEmailBullmqRepository,
   ) {}
 
@@ -25,8 +28,10 @@ export class AuthRecoverPasswordHandler {
     const user = await this._userAuthService.execute(command.username);
 
     if (user) {
-      // TODO: create token to reset password by user
-      const token = await this._userTokenCreateService.execute(user._id, 'RESET_PASSWORD');
+      // TODO: create token reset password in cache
+      const token = this._cryptoRepository.token({ kind: 'ALPHANUMERIC' });
+      const tokenHash = this._cryptoRepository.hash(token);
+      await this._cacheRepository.set(`reset-password:${tokenHash}`, user._id, 600 * 1500); // expire in 15 minutes
 
       // TODO: send email
       const fullName = `${user.names} ${user.surnames}`.trim().trimStart().trimEnd();
